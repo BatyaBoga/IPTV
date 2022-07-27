@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace IPTV.Models
 {
-    internal class ChannelManager
+    public static class ChannelManager
     {
 
         static HttpClient client = new HttpClient();
 
-        private async Task<string> GetRequestAsync(string path)
+        private static async Task<string> GetRequestAsync(string path)
         {
 
             HttpResponseMessage response = await client.GetAsync(path, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
@@ -31,9 +31,9 @@ namespace IPTV.Models
         }
 
 
-        public async Task<List<Chanel>> GetChanelsAsync(string path)
+        public static  async Task<List<Channel>> GetChanelsAsync(string path)
         {
-            List<Chanel> chanels = new List<Chanel>();
+            List<Channel> chanels = new List<Channel>();
 
             string request = String.Empty;
 
@@ -50,7 +50,7 @@ namespace IPTV.Models
 
             foreach (Match m in Regex.Matches(request, pattern))
             {
-                chanels.Add(new Chanel()
+                chanels.Add(new Channel()
                 {
                     TvLogo = m.Groups[2].Value ?? String.Empty,
                     TvName = m.Groups[3].Value ?? String.Empty,

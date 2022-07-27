@@ -1,0 +1,25 @@
+﻿<ContentDialog x:Name="PlayListAdd"
+    x:Class="IPTV.Views.ContentDialog1"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:IPTV.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Add playlist"
+    PrimaryButtonText="Cancel"
+    SecondaryButtonText="Save"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+        <TextBox HorizontalAlignment="Left" Margin="69,0,0,0"  Height="24" Width="196" Grid.Row="1" FontSize="14"/>
+        <TextBox HorizontalAlignment="Left" Margin="69,0,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Center"  Height="23" Width="196"/>
+        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Title" VerticalAlignment="Center"/>
+        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="URL" VerticalAlignment="Top" Margin="0,3,0,0" Grid.Row="1"/>
+    </Grid>
+</ContentDialog>

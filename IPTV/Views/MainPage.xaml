@@ -3,14 +3,69 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:IPTV"
+    xmlns:viewmodels="using:IPTV.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{ThemeResource AppBarBorderThemeBrush}">
 
+
     <Grid>
-      
+        <TextBlock HorizontalAlignment="Right" Margin="0,0,30,0" TextWrapping="Wrap" Text="IPTV" VerticalAlignment="Top" FontSize="250" Height="298" FontWeight="Normal" FontStyle="Normal" TextDecorations="None" FontFamily="Cascadia Code" />
 
+        <Button  Margin="0,0,30,30" VerticalAlignment="Bottom" HorizontalAlignment="Right" Style="{StaticResource MenuBtnStyle}" >
+            <Image Stretch="Uniform" Source= "/Assets/OptionsBtn.png" Margin="-8,-10,-10,-11"/>
+        </Button>
 
+        <Button  Margin="550,50,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Style="{StaticResource MenuBtnStyle}">
+            <Image Stretch="Uniform" Source= "/Assets/AddBtn.png" Margin="-8,-10,-10,-11"/>
+        </Button>
+        
+        <RelativePanel>
+            <ListView Name="LinkList"
+                  SelectionMode="Single"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  ScrollViewer.IsVerticalRailEnabled="True"
+                  ScrollViewer.VerticalScrollMode="Enabled"
+                  ScrollViewer.HorizontalScrollMode="Enabled"
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                  ScrollViewer.IsHorizontalRailEnabled="True"
+                  Margin="80,50,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"
+                  ItemsSource="{x:Bind vm.Links}"
+                  SelectedIndex="{x:Bind vm.SelectedIndex, Mode=TwoWay}">
+                <ListView.HeaderTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal"  >
+                            <TextBlock Text="Title" Margin="30,0,100,0"/>
+                            <TextBlock Text="Channels" Margin="0,0,100,0" />
+                            <TextBlock Text="Modify" Margin="0,0,30,0" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.HeaderTemplate>
+                <ListView.ItemTemplate>
+                    <DataTemplate >
+                        <StackPanel Orientation="Horizontal" >
+                            <TextBlock Name="ItemId"
+                                    Text="{Binding Title}" Margin="5,0,100,0"/>
+                            <TextBlock Name="ItemName"
+                                    Text="{Binding channellList.Count}" Margin="0,0,85,0"/>
+                            <StackPanel Orientation="Horizontal" >
+                                <Button Command="{Binding ElementName=LinkList, Path=DataContext.DeleteLinks}" Margin="0,0,5,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Style="{StaticResource MiniBtnStyle}">
+                                    <Image Stretch="Uniform" Source= "/Assets/update.png" Margin="-8,-10,-10,-11" />
+                                </Button>
+                                <Button  Margin="0,0,5,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Style="{StaticResource MiniBtnStyle}">
+                                    <Image Stretch="Uniform" Source= "/Assets/pen.png" Margin="-8,-10,-10,-11" />
+                                </Button>
+                                <Button Margin="0,0,5,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Style="{StaticResource MiniBtnStyle}">
+                                    <Image Stretch="Uniform" Source= "/Assets/bin.png" Margin="-8,-10,-10,-11" />
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </RelativePanel>
     </Grid>
+
+
 </Page>

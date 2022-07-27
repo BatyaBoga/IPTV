@@ -1,6 +1,6 @@
 ﻿namespace IPTV.Models
 {
-    class Chanel
+    public class Channel
     {
         public string TvLogo { get; set; }
 
