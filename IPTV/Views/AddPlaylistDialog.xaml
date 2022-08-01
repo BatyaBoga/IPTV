@@ -1,0 +1,23 @@
+﻿<ContentDialog
+    x:Class="IPTV.Views.AddPlaylistDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:IPTV.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+     xmlns:viewmodels="using:IPTV.ViewModels"
+    mc:Ignorable="d"
+        HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+    <Grid Margin="0,0,9,-18">
+
+        <TextBox Text="{Binding Title,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Margin="0,34,0,152" HorizontalAlignment="Right" Width="312"></TextBox>
+        <TextBox Text="{Binding Link,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"  Margin="0,90,0,94" HorizontalAlignment="Right" Width="312"></TextBox>
+        <TextBlock HorizontalAlignment="Left" Margin="2,41,0,0" TextWrapping="Wrap" Text="Title" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="2,0,0,0" TextWrapping="Wrap" Text="URL" VerticalAlignment="Center"/>
+        <Button Background="Red" Content="Cancel" Margin="168,155,0,0" Width="87" VerticalAlignment="Top" CornerRadius="15,15,15,15" Command="{Binding Cancel}"/>
+        <Button  Background="Green" Content="{Binding SaveBtn, Mode=OneWay}" Margin="260,155,0,0" Width="87" VerticalAlignment="Top" CornerRadius="15,15,15,15" IsEnabled="{Binding SaveBtnEnabled}" Command="{Binding Save}"/>
+        <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding FormTitle}" VerticalAlignment="Top"/>
+
+    </Grid>
+</ContentDialog>

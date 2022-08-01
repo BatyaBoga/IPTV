@@ -123,15 +123,22 @@
     <Compile Include="Models\Channel.cs" />
     <Compile Include="Models\ChannelManager.cs" />
     <Compile Include="Models\LinksInfo.cs" />
+    <Compile Include="Service\DialogService.cs" />
+    <Compile Include="Service\NavigationService.cs" />
+    <Compile Include="ViewModels\AddListViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\PlayListViewModel.cs" />
     <Compile Include="ViewModels\ViewModel.cs" />
-    <Compile Include="Views\PlayListAdd.xaml.cs">
-      <DependentUpon>PlayListAdd.xaml</DependentUpon>
+    <Compile Include="Views\AddPlaylistDialog.xaml.cs">
+      <DependentUpon>AddPlaylistDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\PlayListView.xaml.cs">
+      <DependentUpon>PlayListView.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -142,6 +149,7 @@
     <Content Include="Assets\AddBtn.png" />
     <Content Include="Assets\bin.png" />
     <Content Include="Assets\pen.png" />
+    <Content Include="Assets\search.png" />
     <Content Include="Assets\update.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
@@ -158,13 +166,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Views\PlayListAdd.xaml">
+    <Page Include="Views\AddPlaylistDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PlayListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

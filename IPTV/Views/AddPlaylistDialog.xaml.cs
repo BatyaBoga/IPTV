@@ -12,24 +12,28 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-
-// Документацию по шаблону элемента "Диалоговое окно содержимого" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
+using IPTV.Models;
+using IPTV.ViewModels;
+using System.Collections.ObjectModel;
 
 namespace IPTV.Views
 {
-    public sealed partial class ContentDialog1 : ContentDialog
+    public sealed partial class AddPlaylistDialog : ContentDialog
     {
-        public ContentDialog1()
+
+        public AddPlaylistDialog(ObservableCollection<LinksInfo> links, int LinksInfoToEditId)
         {
             this.InitializeComponent();
+            this.DataContext = new AddListViewModel(links, LinksInfoToEditId);
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        public AddPlaylistDialog(ObservableCollection<LinksInfo> links)
         {
+            this.InitializeComponent();
+            this.DataContext = new AddListViewModel(links);
         }
 
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-        }
+
+
     }
 }

@@ -15,23 +15,25 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using IPTV.ViewModels;
+using IPTV.Views;
+using IPTV.Service;
 
-// Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x419
 
 namespace IPTV
 {
-    /// <summary>
-    /// Пустая страница, которую можно использовать саму по себе или для перехода внутри фрейма.
-    /// </summary>
+
     public sealed partial class MainPage : Page
     {
         public MainPage()
         {
             this.InitializeComponent();
-            vm = new MainViewModel();
+
+            NavigationService.CurrentInstance.NavigationFrame = MainFrame;
+
+            NS.typeMap.Add(typeof(PlayListViewModel), typeof(PlayListView));
+            NS.typeMap.Add(typeof(MainViewModel), typeof(MainPage));
+
+            DialogService.CurrentInstance.RegisterDialog<AddPlaylistDialog, AddListViewModel> ();
         }
-
-        public MainViewModel vm { get; set; }
-
     }
 }

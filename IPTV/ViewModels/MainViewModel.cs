@@ -6,7 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using IPTV.Models;
+using IPTV.Service;
 using Windows.UI.Popups;
+using IPTV.Views;
+using Windows.UI.Xaml.Input;
 
 namespace IPTV.ViewModels
 {
@@ -17,17 +20,24 @@ namespace IPTV.ViewModels
 
         public int selectedIndex;
 
+
         public MainViewModel()
         {
             Task.Run(async () =>
             {
-                var linkslist = await DataManager.GetLinksInfo();
+                
+                var linkslist =  await DataManager.GetLinksInfo();
 
-                foreach (var item in linkslist.links)
+                if (linkslist.links != null)
                 {
-                    item.channellList = await ChannelManager.GetChanelsAsync(item.Link);
-                    links.Add(item);
+                    foreach (var item in linkslist.links)
+                    {
+                        item.channellList = await ChannelManager.GetChanelsAsync(item.Link);
+                        links.Add(item);
+                    }
                 }
+
+
             }).Wait();
 
             selectedIndex = -1;
@@ -54,29 +64,27 @@ namespace IPTV.ViewModels
             set
             {
                 this.selectedIndex = value;
+                OpenPlaylist();
                 OnPropertyChanged();
             }
         }
-
-        public LinksInfo SelectedLink
-        {
-            get { return (selectedIndex >= 0) ? links[selectedIndex] : null; }
-        }
-        
 
         public ICommand UpdateLinks
         {
             get
             {
-                return new RelayCommand(async (_) =>
+                return new RelayCommand(async (obj) =>
                 {
-                    foreach (var item in links)
-                    {
-                        item.channellList = await ChannelManager.GetChanelsAsync(item.Link);
-                    }
-                    var dialog = new MessageDialog("Hi!");
-                    await dialog.ShowAsync();
+                    LinksInfo linksInfoElement = GetLinksInfoElementBylink(obj);
 
+                    if(linksInfoElement != null)
+                    {
+                        linksInfoElement.channellList = await ChannelManager.GetChanelsAsync(linksInfoElement.Link);
+                        var dialog = new MessageDialog("Playlist updated");
+                        await dialog.ShowAsync();
+                    }
+                   
+                    OnPropertyChanged("Links");
                 });
             }
         }
@@ -85,15 +93,67 @@ namespace IPTV.ViewModels
         {
             get
             {
-                return new RelayCommand((_) =>
+                return new RelayCommand(async(obj) =>
                 {
-                  
-                    links.Remove(SelectedLink);
+
+                    
+                    var dialog = new MessageDialog("Do you realy whant to deleat");
+
+                    dialog.Commands.Add(new UICommand("Yes", async (_) => {
+                        LinksInfo linksInfoElement = GetLinksInfoElementBylink(obj);
+                        if (linksInfoElement != null) links.Remove(linksInfoElement);
+                        await DataManager.SaveLinksInfo(new LinksInfoList() { links = this.links.ToList() });
+                    }));
+
+                    dialog.Commands.Add(new UICommand("No"));
+
+                    await dialog.ShowAsync();
+                    OnPropertyChanged("Links");
 
                 });
             }
         }
 
+
+        public  ICommand AddLinks
+        {
+            get
+            {
+                return new RelayCommand(async(_) =>
+                {
+                    await DialogService.CurrentInstance.ShowDialog<AddListViewModel>(links);
+                });
+            }
+        }
+
+        public ICommand EditLink
+        {
+            get
+            {
+                return new RelayCommand(async (obj) =>
+                {
+                    LinksInfo linksInfoElement = GetLinksInfoElementBylink(obj);
+                    var LinkToEditId = links.IndexOf(linksInfoElement);
+                    await DialogService.CurrentInstance.ShowDialog<AddListViewModel>(links, LinkToEditId);
+                });
+            }
+        }
+
+        private void OpenPlaylist()
+        {
+            var linkse = links[selectedIndex].channellList;
+            //NavigationService.CurrentInstance.NavigateTo("PlayListView", linkse);
+
+            NS.Instance.Navigate(typeof(PlayListViewModel), linkse);
+
+            //NS.Instance.Navigate(typeof(PlayListView), linkse);
+        }
+
+        private LinksInfo GetLinksInfoElementBylink(object bindObject)
+        {
+            var linksInfoElement = (from item in links where item.Link == bindObject.ToString() select item).FirstOrDefault();
+            return linksInfoElement;
+        }
 
 
 
