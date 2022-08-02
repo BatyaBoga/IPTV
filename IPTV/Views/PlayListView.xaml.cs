@@ -16,13 +16,9 @@ using IPTV.ViewModels;
 using IPTV.Service;
 using IPTV.Models;
 
-// Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace IPTV.Views
 {
-    /// <summary>
-    /// Пустая страница, которую можно использовать саму по себе или для перехода внутри фрейма.
-    /// </summary>
     public sealed partial class PlayListView : Page
     {
         public PlayListView()
@@ -34,7 +30,8 @@ namespace IPTV.Views
         {
             if(e.Parameter != null)
             {
-                this.DataContext = new PlayListViewModel((List<Channel>)e.Parameter);
+                this.DataContext = new PlayListViewModel((LinksInfo)e.Parameter);
+                NavigationService.CurrentInstance.NavigationFrame = PlayListFrame;
             }
         }
     }

@@ -20,35 +20,27 @@ namespace IPTV.ViewModels
 
         private string searchText;
 
+        private string playListName;
 
-
-        public PlayListViewModel(List<Channel> channels)
+        public PlayListViewModel(LinksInfo playlist)
         {
-            this.channels = channels;
+            this.channels = playlist.channellList;
+            this.playListName = playlist.Title;
             selectedIndex = 0;
         }
         
-        public MediaSource SelectedChannel
+        public List<Channel> Channels
         {
             get 
             {
-                Uri uri = new Uri((selectedIndex >= 0) ? Channels[selectedIndex].TvStreamlink : null);
-                return MediaSource.CreateFromUri(uri);
-                
+                if(searchText == null)
+                {
+                    return channels;
+                }
+
+                return channels.Where(x => x.TvName.ToUpper().StartsWith(SearchText.ToUpper())).ToList();
             }
         }
-
-
-        public string SearchText
-        {
-            get { return searchText; }
-            set { 
-                searchText = value;
-                OnPropertyChanged();
-                OnPropertyChanged("Channels");
-            }
-        }
-
         public int SelectedIndex
         {
             get
@@ -63,16 +55,36 @@ namespace IPTV.ViewModels
                 OnPropertyChanged("SelectedChannel");
             }
         }
-        public List<Channel> Channels
+        public string SearchText
+        {
+            get { return searchText; }
+            set { 
+                searchText = value;
+                OnPropertyChanged();
+                OnPropertyChanged("Channels");
+            }
+        }
+
+        public string PlayListName
+        {
+            get
+            {
+                return playListName;
+            }
+            set
+            {
+                playListName = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public MediaSource SelectedChannel
         {
             get 
             {
-                if(searchText == null)
-                {
-                    return channels;
-                }
-
-                return channels.Where(x => x.TvName.ToUpper().StartsWith(SearchText.ToUpper())).ToList();
+                Uri uri = new Uri((selectedIndex >= 0) ? Channels[selectedIndex].TvStreamlink : null);
+                return MediaSource.CreateFromUri(uri);
+                
             }
         }
 
@@ -83,7 +95,7 @@ namespace IPTV.ViewModels
                 return new RelayCommand((_)=> {
 
                     NS.Instance.GoBack();
-                    //NavigationService.CurrentInstance.GoBack();
+                   //NavigationService.CurrentInstance.GoBack();
                 });
             }
         }

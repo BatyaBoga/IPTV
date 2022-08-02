@@ -12,10 +12,9 @@
     <Page.DataContext>
         <viewmodels:MainViewModel/>
     </Page.DataContext>
+    
     <Frame x:Name="MainFrame">
         <Grid>
-
-
         <TextBlock HorizontalAlignment="Right" Margin="0,0,30,0" TextWrapping="Wrap" Text="IPTV" VerticalAlignment="Top" FontSize="250" Height="298" FontWeight="Normal" FontStyle="Normal" TextDecorations="None" FontFamily="Cascadia Code" />
 
         <Button  Margin="0,0,30,30" VerticalAlignment="Bottom" HorizontalAlignment="Right" Style="{StaticResource MenuBtnStyle}" >

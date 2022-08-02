@@ -141,12 +141,12 @@ namespace IPTV.ViewModels
 
         private void OpenPlaylist()
         {
-            var linkse = links[selectedIndex].channellList;
-            //NavigationService.CurrentInstance.NavigateTo("PlayListView", linkse);
 
-            NS.Instance.Navigate(typeof(PlayListViewModel), linkse);
+            
+            var TVlinks = links[selectedIndex];
+           //NavigationService.CurrentInstance.NavigateTo("PlayListView", TVlinks);
 
-            //NS.Instance.Navigate(typeof(PlayListView), linkse);
+           NS.Instance.Navigate(typeof(PlayListViewModel), TVlinks);
         }
 
         private LinksInfo GetLinksInfoElementBylink(object bindObject)

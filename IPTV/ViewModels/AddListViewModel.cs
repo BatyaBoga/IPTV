@@ -101,8 +101,6 @@ namespace IPTV.ViewModels
                 OnPropertyChanged();
             }
         }
-        
-
 
         public ICommand Save
         {

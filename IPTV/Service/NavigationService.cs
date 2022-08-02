@@ -93,6 +93,7 @@ namespace IPTV.Service
     {
 
         public static Dictionary<Type, Type> typeMap = new Dictionary<Type, Type>();
+
         public void Navigate(Type sourcePage)
         {
             if (typeMap.Count > 0 && typeMap.ContainsKey(sourcePage))
@@ -105,7 +106,7 @@ namespace IPTV.Service
         public void Navigate(Type sourcePage, object parameter)
         {
             if (typeMap.Count > 0 && typeMap.ContainsKey(sourcePage))
-            {
+            {  
                 var frame = (Frame)Window.Current.Content;
                 frame.Navigate(typeMap[sourcePage], parameter);
             }
@@ -114,9 +115,10 @@ namespace IPTV.Service
         public void GoBack()
         {
             var frame = (Frame)Window.Current.Content;
-            if (frame.CanGoForward)
+
+            if (frame.CanGoBack)
             {
-                frame.GoForward();
+                frame.GoBack();
             }
 
         }
@@ -128,4 +130,8 @@ namespace IPTV.Service
 
         public static NS Instance => instance.Value;
     }
+
+
+
+
 }
