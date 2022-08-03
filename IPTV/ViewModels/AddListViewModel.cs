@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using IPTV.Models;
 using IPTV.Service;
 using Windows.UI.Popups;
+using Windows.ApplicationModel.Resources;
 
 namespace IPTV.ViewModels
 {
@@ -31,8 +30,9 @@ namespace IPTV.ViewModels
         public AddListViewModel(ObservableCollection<LinksInfo> links)
         {
             saveBtnEnabled = false;
-            FormTitle = "Add PlayList";
-            SaveBtn = "Add";
+            var resourceLoader = ResourceLoader.GetForCurrentView();
+            FormTitle = resourceLoader.GetString("AddPlaylistMsg");
+            SaveBtn = resourceLoader.GetString("Add");
             this.links = links;
             linksInfoToEditId = -1;
         }
@@ -44,8 +44,9 @@ namespace IPTV.ViewModels
             this.linksInfoToEditId = LinksInfoToEditId;
             link = links[LinksInfoToEditId].Link;
             title = links[LinksInfoToEditId].Title;
-            FormTitle = "Edit PlayList";
-            SaveBtn = "Save";
+            var resourceLoader = ResourceLoader.GetForCurrentView();
+            FormTitle = resourceLoader.GetString("EditPlaylistMsq");
+            SaveBtn = resourceLoader.GetString("Save");
         }
 
         public string FormTitle
@@ -108,31 +109,23 @@ namespace IPTV.ViewModels
             {
                 return new RelayCommand(async (_) =>
                 {
-
                     var linksInfo = new LinksInfo()
                     {
                         Link = link,
                         Title = title,
                         channellList = await ChannelManager.GetChanelsAsync(Link)
                     };
-                   
-
 
                     await SaveLink(linksInfo);
-
                 });
             }
         }
-
 
         public ICommand Cancel
         {
             get
             {
-                return new RelayCommand((_) =>
-                {
-                    DialogService.CurrentInstance.CloseDialog();
-                });
+                return new RelayCommand((_) => DialogService.CurrentInstance.CloseDialog());
             }
         }
 
@@ -175,9 +168,7 @@ namespace IPTV.ViewModels
             else
             {
                 SaveBtnEnabled = false;
-            }
-
-            
+            }  
         }
 
         private async Task SaveToFile()

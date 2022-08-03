@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using IPTV.Models;
 using IPTV.Service;
 using Windows.UI.Popups;
-using IPTV.Views;
-using Windows.UI.Xaml.Input;
+using Windows.ApplicationModel.Resources;
 
 namespace IPTV.ViewModels
 {
@@ -18,8 +15,9 @@ namespace IPTV.ViewModels
 
         private ObservableCollection<LinksInfo> links = new ObservableCollection<LinksInfo>();
 
-        public int selectedIndex;
+        private ResourceLoader resourceLoader;
 
+        private int selectedIndex;
 
         public MainViewModel()
         {
@@ -41,9 +39,9 @@ namespace IPTV.ViewModels
             }).Wait();
 
             selectedIndex = -1;
-            
-        }
 
+            resourceLoader = ResourceLoader.GetForCurrentView();
+        }
         public ObservableCollection<LinksInfo> Links
         {
             get { return links; }
@@ -53,7 +51,6 @@ namespace IPTV.ViewModels
                 OnPropertyChanged();
             }
         }
-
         public int SelectedIndex
         {
             get
@@ -68,7 +65,6 @@ namespace IPTV.ViewModels
                 OnPropertyChanged();
             }
         }
-
         public ICommand UpdateLinks
         {
             get
@@ -80,7 +76,9 @@ namespace IPTV.ViewModels
                     if(linksInfoElement != null)
                     {
                         linksInfoElement.channellList = await ChannelManager.GetChanelsAsync(linksInfoElement.Link);
-                        var dialog = new MessageDialog("Playlist updated");
+
+                        var dialog = new MessageDialog(resourceLoader.GetString("UpdateMsg"));
+                        dialog.Commands.Add(new UICommand("OK"));
                         await dialog.ShowAsync();
                     }
                    
@@ -88,44 +86,6 @@ namespace IPTV.ViewModels
                 });
             }
         }
-
-        public ICommand DeleteLinks
-        {
-            get
-            {
-                return new RelayCommand(async(obj) =>
-                {
-
-                    
-                    var dialog = new MessageDialog("Do you realy whant to deleat");
-
-                    dialog.Commands.Add(new UICommand("Yes", async (_) => {
-                        LinksInfo linksInfoElement = GetLinksInfoElementBylink(obj);
-                        if (linksInfoElement != null) links.Remove(linksInfoElement);
-                        await DataManager.SaveLinksInfo(new LinksInfoList() { links = this.links.ToList() });
-                    }));
-
-                    dialog.Commands.Add(new UICommand("No"));
-
-                    await dialog.ShowAsync();
-                    OnPropertyChanged("Links");
-
-                });
-            }
-        }
-
-
-        public  ICommand AddLinks
-        {
-            get
-            {
-                return new RelayCommand(async(_) =>
-                {
-                    await DialogService.CurrentInstance.ShowDialog<AddListViewModel>(links);
-                });
-            }
-        }
-
         public ICommand EditLink
         {
             get
@@ -138,24 +98,57 @@ namespace IPTV.ViewModels
                 });
             }
         }
-
-        private void OpenPlaylist()
+        public ICommand DeleteLinks
         {
+            get
+            {
+                return new RelayCommand(async(obj) =>
+                {  
+                    var dialog = new MessageDialog(resourceLoader.GetString("DeleteMsg"));
 
-            
-            var TVlinks = links[selectedIndex];
-           //NavigationService.CurrentInstance.NavigateTo("PlayListView", TVlinks);
+                    dialog.Commands.Add(new UICommand(resourceLoader.GetString("Yes"), (_)=>DeletePlaylist(obj)));
+                    dialog.Commands.Add(new UICommand(resourceLoader.GetString("No")));
+                    await dialog.ShowAsync();
 
-           NS.Instance.Navigate(typeof(PlayListViewModel), TVlinks);
+                    OnPropertyChanged("Links");
+
+                });
+            }
         }
+        public ICommand AddLinks
+        {
+            get
+            {
+                return new RelayCommand(async(_) => await DialogService.CurrentInstance.ShowDialog<AddListViewModel>(links));
+            }
+        }
+        public ICommand OpenOptions
+        {
+            get
+            {
+                return new RelayCommand((_) => NavigationService.Instance.Navigate(typeof(OptionsViewModel)));
+            }
+        }
+        private void OpenPlaylist()
+        {  
+            NavigationService.Instance.Navigate(typeof(PlayListViewModel), links[selectedIndex]);
+        }
+        private async void DeletePlaylist(object obj)
+        {
+            LinksInfo linksInfoElement = GetLinksInfoElementBylink(obj);
 
+            if (linksInfoElement != null)
+            {
+                links.Remove(linksInfoElement);
+            } 
+               
+            await DataManager.SaveLinksInfo(new LinksInfoList() { links = this.links.ToList() });
+        }
         private LinksInfo GetLinksInfoElementBylink(object bindObject)
         {
             var linksInfoElement = (from item in links where item.Link == bindObject.ToString() select item).FirstOrDefault();
             return linksInfoElement;
         }
-
-
 
     }
 }

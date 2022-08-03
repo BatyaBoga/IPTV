@@ -3,35 +3,38 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:IPTV.Views"
+    xmlns:app="using:IPTV"
     xmlns:viewmodels="using:IPTV.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    MinWidth="1280"
+    MinHeight="720"
+    RequestedTheme="{x:Bind Path=app:App.CurrentThemeForApp, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
     Background="{ThemeResource AppBarBorderThemeBrush}">
 
     <Page.DataContext>
         <viewmodels:MainViewModel/>
     </Page.DataContext>
-    
-    <Frame x:Name="MainFrame">
-        <Grid>
-        <TextBlock HorizontalAlignment="Right" Margin="0,0,30,0" TextWrapping="Wrap" Text="IPTV" VerticalAlignment="Top" FontSize="250" Height="298" FontWeight="Normal" FontStyle="Normal" TextDecorations="None" FontFamily="Cascadia Code" />
 
-        <Button  Margin="0,0,30,30" VerticalAlignment="Bottom" HorizontalAlignment="Right" Style="{StaticResource MenuBtnStyle}" >
-            <Image Stretch="Uniform" Source= "/Assets/OptionsBtn.png" Margin="-8,-10,-10,-11"/>
+
+    <Grid>
+        
+        <TextBlock HorizontalAlignment="Right" Margin="0,0,30,0" TextWrapping="Wrap" 
+                   Text="IPTV" VerticalAlignment="Top" FontSize="250" Height="298" 
+                   FontWeight="Normal" FontStyle="Normal" TextDecorations="None" FontFamily="Cascadia Code" />
+
+        <Button Command="{Binding OpenOptions}" Margin="0,0,30,30" VerticalAlignment="Bottom" HorizontalAlignment="Right" Style="{StaticResource MenuBtnStyle}" >
+            <Image Stretch="Uniform" Source= "/Assets/OptionsBtn.png" Margin="-8,-10,-11,-10"/>
         </Button>
 
         <Button   Command ="{Binding AddLinks}" Margin="550,50,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Style="{StaticResource MenuBtnStyle}">
             <Image Stretch="Uniform" Source= "/Assets/AddBtn.png" Margin="-8,-10,-10,-11"/>
         </Button>
 
-       
-
-
-
-
         <RelativePanel>
-                <ListView Name="LinkList"
+
+            <ListView Name="LinkList"
                   SelectionMode="Single"
                   ScrollViewer.VerticalScrollBarVisibility="Auto"
                   ScrollViewer.IsVerticalRailEnabled="True"
@@ -44,42 +47,44 @@
                   IsItemClickEnabled="True"
                   SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}">
 
-                    <ListView.HeaderTemplate>
+                <ListView.HeaderTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" >
-                            <TextBlock Text="Title" Margin="40,0,100,0"/>
-                            <TextBlock Text="Channels" Margin="0,0,100,0" />
-                            <TextBlock Text="Modify" Margin="0,0,30,0" />
+                        <StackPanel Orientation="Horizontal" >
+                            <TextBlock x:Uid="Title" Margin="7,0,23,0" HorizontalTextAlignment="Center" Width="100" FontWeight="Bold"   />
+                            <TextBlock x:Uid="Channels" Margin="45,0,0,0"  Width="60" HorizontalTextAlignment="Center" FontWeight="Bold"/>
+                            <TextBlock x:Uid="Modify" Margin="65,0,0,0"  Width="110" HorizontalTextAlignment="Center"  FontWeight="Bold"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListView.HeaderTemplate>
 
-                 <ListView.ItemTemplate>
+                <ListView.ItemTemplate>
                     <DataTemplate >
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Title}"  TextWrapping="Wrap" Width="100" Margin="-5,0,30,0" HorizontalAlignment="Right"  HorizontalTextAlignment="Center" />
-                            <TextBlock Text="{Binding channellList.Count}" Width="50" Margin="45,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                                <StackPanel Orientation="Horizontal"  Width="110" Margin="65,0,0,0" VerticalAlignment="Center" >
-                                <Button Command="{Binding ElementName=LinkList, Path=DataContext.UpdateLinks}" CommandParameter="{Binding Link}" Margin="0,0,5,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Style="{StaticResource MiniBtnStyle}">
+                            <TextBlock Text="{Binding Title}"  TextWrapping="Wrap" Width="100" Margin="-5,0,30,0" 
+                                       HorizontalAlignment="Right"  HorizontalTextAlignment="Center" />
+                            <TextBlock Text="{Binding channellList.Count}" Width="50" Margin="45,0,0,0" 
+                                       VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                            <StackPanel Orientation="Horizontal"  Width="110" Margin="65,0,0,0" VerticalAlignment="Center" >
+                                <Button Command="{Binding ElementName=LinkList, Path=DataContext.UpdateLinks}" 
+                                        CommandParameter="{Binding Link}" Margin="0,0,5,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Style="{StaticResource MiniBtnStyle}">
                                     <Image Stretch="Uniform" Source= "/Assets/update.png" Margin="-8,-10,-10,-11" />
                                 </Button>
-                                    <Button  Command="{Binding ElementName=LinkList, Path=DataContext.EditLink}"  CommandParameter="{Binding Link}" Margin="0,0,5,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Style="{StaticResource MiniBtnStyle}">
+                                <Button  Command="{Binding ElementName=LinkList, Path=DataContext.EditLink}"  
+                                         CommandParameter="{Binding Link}" Margin="0,0,5,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Style="{StaticResource MiniBtnStyle}">
                                     <Image Stretch="Uniform" Source= "/Assets/pen.png" Margin="-8,-10,-10,-11" />
                                 </Button>
-                                <Button Command="{Binding ElementName=LinkList, Path=DataContext.DeleteLinks}" CommandParameter="{Binding Link}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Style="{StaticResource MiniBtnStyle}">
+                                <Button Command="{Binding ElementName=LinkList, Path=DataContext.DeleteLinks}" 
+                                        CommandParameter="{Binding Link}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Style="{StaticResource MiniBtnStyle}">
                                     <Image Stretch="Uniform" Source= "/Assets/bin.png" Margin="-8,-10,-10,-11" />
                                 </Button>
                             </StackPanel>
                         </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
+                
             </ListView>
         </RelativePanel>
-
     </Grid>
-    </Frame>
-
-
 </Page>
 
 

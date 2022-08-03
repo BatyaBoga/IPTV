@@ -27,13 +27,6 @@ namespace IPTV
         public MainPage()
         {
             this.InitializeComponent();
-
-            NavigationService.CurrentInstance.NavigationFrame = MainFrame;
-
-            NS.typeMap.Add(typeof(PlayListViewModel), typeof(PlayListView));
-
-            DialogService.CurrentInstance.RegisterDialog<AddPlaylistDialog, AddListViewModel> ();
         }
-
     }
 }

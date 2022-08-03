@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 using IPTV.ViewModels;
 using IPTV.Service;
 using IPTV.Models;
-
+using Windows.UI.Core;
 
 namespace IPTV.Views
 {
@@ -31,8 +31,16 @@ namespace IPTV.Views
             if(e.Parameter != null)
             {
                 this.DataContext = new PlayListViewModel((LinksInfo)e.Parameter);
-                NavigationService.CurrentInstance.NavigationFrame = PlayListFrame;
             }
+        }
+
+        protected async override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                Player.MediaPlayer.Pause();
+            });
         }
     }
 }

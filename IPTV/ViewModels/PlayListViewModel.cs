@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using IPTV.Models;
 using Windows.Media.Core;
 using IPTV.Service;
-using Windows.UI.Popups;
-using Windows.UI.Xaml.Controls;
 
 namespace IPTV.ViewModels
 {
@@ -21,14 +17,12 @@ namespace IPTV.ViewModels
         private string searchText;
 
         private string playListName;
-
         public PlayListViewModel(LinksInfo playlist)
         {
             this.channels = playlist.channellList;
             this.playListName = playlist.Title;
             selectedIndex = 0;
-        }
-        
+        }        
         public List<Channel> Channels
         {
             get 
@@ -47,7 +41,6 @@ namespace IPTV.ViewModels
             {
                 return this.selectedIndex;
             }
-
             set
             {
                 this.selectedIndex = value;
@@ -64,7 +57,6 @@ namespace IPTV.ViewModels
                 OnPropertyChanged("Channels");
             }
         }
-
         public string PlayListName
         {
             get
@@ -77,26 +69,19 @@ namespace IPTV.ViewModels
                 OnPropertyChanged();
             }
         }
-
         public MediaSource SelectedChannel
         {
             get 
             {
                 Uri uri = new Uri((selectedIndex >= 0) ? Channels[selectedIndex].TvStreamlink : null);
-                return MediaSource.CreateFromUri(uri);
-                
+                return MediaSource.CreateFromUri(uri); 
             }
         }
-
         public ICommand ReturnBack
         {
             get
             {
-                return new RelayCommand((_)=> {
-
-                    NS.Instance.GoBack();
-                   //NavigationService.CurrentInstance.GoBack();
-                });
+                return new RelayCommand((_)=> NavigationService.Instance.GoBack());
             }
         }
     }

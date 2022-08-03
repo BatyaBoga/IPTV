@@ -16,7 +16,6 @@ namespace IPTV.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
-
     }
 
     public class RelayCommand : ICommand
@@ -38,5 +37,4 @@ namespace IPTV.ViewModels
 
         public event EventHandler CanExecuteChanged;
     }
-
 }

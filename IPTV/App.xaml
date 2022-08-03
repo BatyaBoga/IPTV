@@ -9,7 +9,6 @@
 
     <Application.Resources>
 
-
         <Style x:Key="MenuBtnStyle" TargetType="Button" >
             <Setter Property="Control.CornerRadius" Value="20,20,20,20" />
             <Setter Property="Control.BorderThickness" Value="2,2,2,2" />
@@ -25,8 +24,8 @@
             <Setter Property="Control.Height" Value="30" />
         </Style>
 
-
     </Application.Resources>
+    
 </Application>
 
 

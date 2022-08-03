@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -13,12 +12,18 @@ namespace IPTV.Models
         {
             StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
 
-            StorageFile jsonFile = await storageFolder.GetFileAsync("Links.json");
+            StorageFile jsonFile;
 
-            if (jsonFile == null)
+            try
+            {
+                jsonFile = await storageFolder.GetFileAsync("Links.json");
+            }
+            catch
             {
                 jsonFile = await storageFolder.CreateFileAsync("Links.json");
             }
+           
+
 
             string linksjson = JsonConvert.SerializeObject(links);
 
@@ -30,6 +35,7 @@ namespace IPTV.Models
             LinksInfoList links = new LinksInfoList();
 
             StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
+
             StorageFile jsonFile;
 
             try
