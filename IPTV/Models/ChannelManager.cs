@@ -9,35 +9,20 @@ namespace IPTV.Models
     public static class ChannelManager
     {
 
-        static HttpClient client = new HttpClient();
+      
 
-        private static async Task<string> GetRequestAsync(string path)
-        {
-
-            HttpResponseMessage response = await client.GetAsync(path, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
-
-            if (response.IsSuccessStatusCode)
-            {
-                return await response.Content.ReadAsStringAsync();
-
-            }
-            else
-            {
-                throw new HttpRequestException();
-            }
-
-        }
+  
 
 
         public static  async Task<List<Channel>> GetChanelsAsync(string path)
         {
-            List<Channel> chanels = new List<Channel>();
+            var chanels = new List<Channel>();
 
             string request = String.Empty;
 
             try
             {
-               request = await GetRequestAsync(path);
+              // request = await GetRequestAsync(path);
             }
             catch(HttpRequestException)
             {

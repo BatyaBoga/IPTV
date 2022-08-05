@@ -9,13 +9,11 @@ namespace IPTV.ViewModels
 {
     public class OptionsViewModel : ViewModel
     {
-
         private bool isToogleOn;
 
         private Dictionary<string, string> languages;
 
         private int selectedIndex;
-
         public OptionsViewModel()
         {
             SetToogle();

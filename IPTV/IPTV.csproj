@@ -119,12 +119,15 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Constants\Constant.cs" />
     <Compile Include="Models\DataManager.cs" />
     <Compile Include="Models\Channel.cs" />
     <Compile Include="Models\ChannelManager.cs" />
+    <Compile Include="Models\HttpManager.cs" />
+    <Compile Include="Models\IHttpManager.cs" />
     <Compile Include="Models\LinksInfo.cs" />
-    <Compile Include="Service\DialogService.cs" />
-    <Compile Include="Service\NavigationService.cs" />
+    <Compile Include="Services\DialogService.cs" />
+    <Compile Include="Services\NavigationService.cs" />
     <Compile Include="ViewModels\AddListViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\OptionsViewModel.cs" />

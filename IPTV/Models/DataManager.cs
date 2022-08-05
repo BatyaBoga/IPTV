@@ -2,25 +2,25 @@
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using Windows.Storage;
+using IPTV.Constants;
 
 namespace IPTV.Models
 {
     public static class DataManager
     {
-
         public static async Task SaveLinksInfo(LinksInfoList links)
         {
-            StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
+            var storageFolder = ApplicationData.Current.LocalFolder;
 
             StorageFile jsonFile;
 
             try
             {
-                jsonFile = await storageFolder.GetFileAsync("Links.json");
+                jsonFile = await storageFolder.GetFileAsync(Constant.DataFileName);
             }
             catch
             {
-                jsonFile = await storageFolder.CreateFileAsync("Links.json");
+                jsonFile = await storageFolder.CreateFileAsync(Constant.DataFileName);
             }
            
 
@@ -32,15 +32,15 @@ namespace IPTV.Models
 
         public static async Task<LinksInfoList> GetLinksInfo()
         {
-            LinksInfoList links = new LinksInfoList();
+            var links = new LinksInfoList();
 
-            StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
+            var storageFolder = ApplicationData.Current.LocalFolder;
 
             StorageFile jsonFile;
 
             try
             {
-                jsonFile = await storageFolder.GetFileAsync("Links.json");
+                jsonFile = await storageFolder.GetFileAsync(Constant.DataFileName);
             }
             catch
             {

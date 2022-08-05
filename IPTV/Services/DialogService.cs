@@ -5,8 +5,6 @@ using Windows.UI.Xaml.Controls;
 
 namespace IPTV.Service
 {
-
-
     public class DialogService 
     {
 

@@ -12,7 +12,6 @@ namespace IPTV.ViewModels
 {
     public class MainViewModel : ViewModel
     {
-
         private ObservableCollection<LinksInfo> links = new ObservableCollection<LinksInfo>();
 
         private ResourceLoader resourceLoader;
@@ -26,11 +25,11 @@ namespace IPTV.ViewModels
                 
                 var linkslist =  await DataManager.GetLinksInfo();
 
-                if (linkslist.links != null)
+                if (linkslist.Links != null)
                 {
-                    foreach (var item in linkslist.links)
+                    foreach (var item in linkslist.Links)
                     {
-                        item.channellList = await ChannelManager.GetChanelsAsync(item.Link);
+                        item.ChannellList = await ChannelManager.GetChanelsAsync(item.Link);
                         links.Add(item);
                     }
                 }
@@ -71,11 +70,11 @@ namespace IPTV.ViewModels
             {
                 return new RelayCommand(async (obj) =>
                 {
-                    LinksInfo linksInfoElement = GetLinksInfoElementBylink(obj);
+                    var linksInfoElement = GetLinksInfoElementBylink(obj);
 
                     if(linksInfoElement != null)
                     {
-                        linksInfoElement.channellList = await ChannelManager.GetChanelsAsync(linksInfoElement.Link);
+                        linksInfoElement.ChannellList = await ChannelManager.GetChanelsAsync(linksInfoElement.Link);
 
                         var dialog = new MessageDialog(resourceLoader.GetString("UpdateMsg"));
                         dialog.Commands.Add(new UICommand("OK"));
@@ -92,7 +91,7 @@ namespace IPTV.ViewModels
             {
                 return new RelayCommand(async (obj) =>
                 {
-                    LinksInfo linksInfoElement = GetLinksInfoElementBylink(obj);
+                    var linksInfoElement = GetLinksInfoElementBylink(obj);
                     var LinkToEditId = links.IndexOf(linksInfoElement);
                     await DialogService.CurrentInstance.ShowDialog<AddListViewModel>(links, LinkToEditId);
                 });
@@ -135,14 +134,14 @@ namespace IPTV.ViewModels
         }
         private async void DeletePlaylist(object obj)
         {
-            LinksInfo linksInfoElement = GetLinksInfoElementBylink(obj);
+            var linksInfoElement = GetLinksInfoElementBylink(obj);
 
             if (linksInfoElement != null)
             {
                 links.Remove(linksInfoElement);
             } 
                
-            await DataManager.SaveLinksInfo(new LinksInfoList() { links = this.links.ToList() });
+            await DataManager.SaveLinksInfo(new LinksInfoList() { Links = this.links.ToList() });
         }
         private LinksInfo GetLinksInfoElementBylink(object bindObject)
         {

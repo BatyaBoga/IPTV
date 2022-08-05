@@ -62,7 +62,7 @@
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="{Binding Title}"  TextWrapping="Wrap" Width="100" Margin="-5,0,30,0" 
                                        HorizontalAlignment="Right"  HorizontalTextAlignment="Center" />
-                            <TextBlock Text="{Binding channellList.Count}" Width="50" Margin="45,0,0,0" 
+                            <TextBlock Text="{Binding ChannellList.Count}" Width="50" Margin="45,0,0,0" 
                                        VerticalAlignment="Center" HorizontalAlignment="Right"/>
                             <StackPanel Orientation="Horizontal"  Width="110" Margin="65,0,0,0" VerticalAlignment="Center" >
                                 <Button Command="{Binding ElementName=LinkList, Path=DataContext.UpdateLinks}" 

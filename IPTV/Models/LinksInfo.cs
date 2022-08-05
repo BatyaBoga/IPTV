@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace IPTV.Models
 {
@@ -8,13 +9,12 @@ namespace IPTV.Models
 
         public string Title { get; set; }
 
-        [Newtonsoft.Json.JsonIgnore]
-        public  List<Channel> channellList { get; set; }
+        [JsonIgnore]
+        public  List<Channel> ChannellList { get; set; }
     }
-
 
     public class LinksInfoList
     {
-        public List<LinksInfo> links { get; set; }
+        public List<LinksInfo> Links { get; set; }
     }
 }

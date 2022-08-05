@@ -13,10 +13,11 @@
 
     <Grid Margin="0,0,9,-18">
         <TextBox Text="{Binding Title,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
-                 Margin="70,34,0,152" HorizontalAlignment="Right" Width="312"></TextBox>
+                 Margin="70,34,0,152" HorizontalAlignment="Right" Width="312" CornerRadius="4,4,4,4"
+                 MaxLength="30"></TextBox>
         
         <TextBox Text="{Binding Link,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"  
-                 Margin="0,90,0,94" HorizontalAlignment="Right" Width="312"></TextBox>
+                 Margin="0,90,0,94" HorizontalAlignment="Right" Width="312" CornerRadius="4,4,4,4"></TextBox>
         
         <TextBlock HorizontalAlignment="Left" Margin="0,41,5,0" 
                    TextWrapping="Wrap" x:Uid="title" VerticalAlignment="Top"/>

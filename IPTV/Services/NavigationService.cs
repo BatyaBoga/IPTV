@@ -7,7 +7,6 @@ using Windows.UI.Xaml;
 
 namespace IPTV.Service
 {
-
     sealed class NavigationService
     {
         private NavigationService() { }
@@ -23,18 +22,26 @@ namespace IPTV.Service
         {
             if (Map.Count > 0 && Map.ContainsKey(sourcePage))
             {
-                var frame = (Frame)Window.Current.Content;
-                frame.CacheSize = 0;
-                frame.Navigate(Map[sourcePage]);
+                var frame = Window.Current.Content as Frame;
+
+                if(frame != null)
+                {
+                    frame.Navigate(Map[sourcePage]);
+                } 
             }
         }
 
         public void Navigate(Type sourcePage, object parameter)
         {
             if (Map.Count > 0 && Map.ContainsKey(sourcePage))
-            {  
-                var frame = (Frame)Window.Current.Content;
+            {
+                var frame = Window.Current.Content as Frame;
+
+                if(frame != null)
+                {
                 frame.Navigate(Map[sourcePage], parameter);
+
+                }
             }
         }
 

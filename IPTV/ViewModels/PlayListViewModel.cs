@@ -19,7 +19,7 @@ namespace IPTV.ViewModels
         private string playListName;
         public PlayListViewModel(LinksInfo playlist)
         {
-            this.channels = playlist.channellList;
+            this.channels = playlist.ChannellList;
             this.playListName = playlist.Title;
             selectedIndex = 0;
         }        
@@ -73,7 +73,7 @@ namespace IPTV.ViewModels
         {
             get 
             {
-                Uri uri = new Uri((selectedIndex >= 0) ? Channels[selectedIndex].TvStreamlink : null);
+                var uri = new Uri((selectedIndex >= 0) ? Channels[selectedIndex].TvStreamlink : null);
                 return MediaSource.CreateFromUri(uri); 
             }
         }

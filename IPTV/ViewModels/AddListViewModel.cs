@@ -113,7 +113,7 @@ namespace IPTV.ViewModels
                     {
                         Link = link,
                         Title = title,
-                        channellList = await ChannelManager.GetChanelsAsync(Link)
+                        ChannellList = await ChannelManager.GetChanelsAsync(Link)
                     };
 
                     await SaveLink(linksInfo);
@@ -133,7 +133,7 @@ namespace IPTV.ViewModels
         {
             
 
-            if (linksInfo.channellList.Count > 0)
+            if (linksInfo.ChannellList.Count > 0)
             {
                 if (linksInfoToEditId >= 0)
                 {
@@ -159,9 +159,18 @@ namespace IPTV.ViewModels
             return Regex.IsMatch(link, regex);
         }
 
+        private bool IsGoodTitle(string title)
+        {
+            if(title == null) return false;
+
+
+            string regex = @"^\w+$";
+            return Regex.IsMatch(title, regex);
+        }
+
         private void IsCorrect()
         {
-            if (IsLink(Link) && Title !="")
+            if (IsLink(Link) && IsGoodTitle(Title))
             {
                 SaveBtnEnabled = true;
             }
@@ -175,7 +184,7 @@ namespace IPTV.ViewModels
         {
             await new MessageDialog("Successfully").ShowAsync();
 
-            await DataManager.SaveLinksInfo(new LinksInfoList() { links = this.links.ToList() });
+            await DataManager.SaveLinksInfo(new LinksInfoList() { Links = this.links.ToList() });
 
             DialogService.CurrentInstance.CloseDialog();
         }
