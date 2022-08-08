@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Windows.Storage;
-using Windows.Globalization;
 using Windows.ApplicationModel.Resources;
-using IPTV.Service;
+using IPTV.Constants;
+using IPTV.Managers;
 
 namespace IPTV.ViewModels
 {
@@ -11,82 +10,89 @@ namespace IPTV.ViewModels
     {
         private bool isToogleOn;
 
-        private Dictionary<string, string> languages;
+        private LanguageManager languageManager;
 
         private int selectedIndex;
+
         public OptionsViewModel()
         {
-            SetToogle();
+            SetToogleState();
 
-            languages = new Dictionary<string, string>();
-            languages.Add("en-Us", "English");
-            languages.Add("ru", "Русский");
+            languageManager = new LanguageManager();
 
-            SetLanguage();
+            selectedIndex = languageManager.SelectedLanguageIndex();
         }
+
         public string ToogleOn
+        {
+            get => ResourceLoader.GetForCurrentView().GetString(Constant.LightTheme); 
+        }
+
+        public bool IsToogleOn
         {
             get
             {
-                var resourceLoader = ResourceLoader.GetForCurrentView();
-                return resourceLoader.GetString("Light");
+                return isToogleOn;
             }
-        }
-        public bool IsToogleOn
-        {
-            get { return isToogleOn; }
-            set {
+            set 
+            {
                 isToogleOn = value;
+
                 ChangeTheme(value);
+
                 OnPropertyChanged();
             }
         }
+
         public Dictionary<string,string> Languages
         {
-            get { return languages; }
+            get
+            {
+                return languageManager.languages;
+            } 
             set
             {
-                languages = value;
+                languageManager.languages = value;
                 OnPropertyChanged();
             }
         }
+
         public int SelectedIndex
         {
-            get { return selectedIndex; }
+            get
+            {
+                return selectedIndex;
+            }
             set
             {
                 if (value != selectedIndex)
                 {
                     selectedIndex = value;
-                    ChnageLanguage(languages.ElementAt(selectedIndex).Key);
-                }
+
+                    languageManager.ChnageLanguage(selectedIndex);
+
+                    OnPropertyChanged();
+                }  
+            }
+        }
+
+        public string CurrentTheme
+        {
+            get
+            {
+                return App.CurrentThemeForApp;
+            }
+            set
+            {
+                App.CurrentThemeForApp = value;
 
                 OnPropertyChanged();
             }
         }
-        public string CurrentTheme
+
+        private void SetToogleState()
         {
-            get { return App.CurrentThemeForApp; }
-            set
-            {
-                App.CurrentThemeForApp = value;
-                OnPropertyChanged();
-            }
-        }
-        private async void ChnageLanguage(string culture)
-        {
-            ApplicationLanguages.PrimaryLanguageOverride = culture;
-            ApplicationData.Current.LocalSettings.Values["languageSetting"] = culture;
-            await NavigationService.Instance.Refresh(typeof(OptionsViewModel));
-        }
-        private void ChangeTheme(bool theme)
-        {
-            CurrentTheme = theme ? "Light" : "Dark";
-            ApplicationData.Current.LocalSettings.Values["themeSetting"] = theme ? 0: 1;
-        }
-        private void SetToogle()
-        {
-            if (App.CurrentThemeForApp == "Light")
+            if (App.CurrentThemeForApp == Constant.LightTheme)
             {
                 isToogleOn = true;
             }
@@ -96,29 +102,12 @@ namespace IPTV.ViewModels
             }
 
         }
-        private void SetLanguage()
+
+        private void ChangeTheme(bool theme)
         {
-            object languageObj = ApplicationData.Current.LocalSettings.Values["languageSetting"];
+            CurrentTheme = theme ? Constant.LightTheme : Constant.DarkTheme;
 
-            string languageName = string.Empty;
-
-            if (languageObj != null)
-            {
-                languageName = (string)languageObj;
-            }
-            else
-            {
-                languageName = ApplicationLanguages.PrimaryLanguageOverride;
-            }
-
-
-            for (int i = 0; i < languages.Count; i++)
-            {
-                if (languages.ElementAt(i).Key == languageName)
-                {
-                    selectedIndex = i;
-                }
-            }
+            ApplicationData.Current.LocalSettings.Values[Constant.ThemeSetting] = theme ? 0: 1;
         }
     }
 }

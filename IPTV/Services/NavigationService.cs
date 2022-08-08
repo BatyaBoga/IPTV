@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml;
 
-
-namespace IPTV.Service
+namespace IPTV.Services
 {
     sealed class NavigationService
     {
@@ -16,46 +14,33 @@ namespace IPTV.Service
 
         public static NavigationService Instance => instance.Value;
 
-        public static Dictionary<Type, Type> Map = new Dictionary<Type, Type>();
-
-        public void Navigate(Type sourcePage)
+        public void Navigate<TViewModel>()
         {
-            if (Map.Count > 0 && Map.ContainsKey(sourcePage))
-            {
-                var frame = Window.Current.Content as Frame;
+            Navigate<TViewModel>(null);
+        }
 
-                if(frame != null)
-                {
-                    frame.Navigate(Map[sourcePage]);
-                } 
+        public void Navigate<TViewModel>(object parameter)
+        {
+            var type = DependencyContainer.GetDependecyType(typeof(TViewModel));
+
+            if (type != null) { 
+
+                GetFrame().Navigate(type, parameter);  
             }
         }
 
-        public void Navigate(Type sourcePage, object parameter)
+        public async Task Refresh<TViewModel>()
         {
-            if (Map.Count > 0 && Map.ContainsKey(sourcePage))
-            {
-                var frame = Window.Current.Content as Frame;
+            Navigate<TViewModel>(DateTime.Now.Ticks);
 
-                if(frame != null)
-                {
-                frame.Navigate(Map[sourcePage], parameter);
-
-                }
-            }
-        }
-
-        public async Task Refresh(Type sourcePage)
-        {
-            this.Navigate(sourcePage, DateTime.Now.Ticks);
             await Task.Delay(100);
-            this.GoBack();
+
+            GoBack();
         }
 
         public void GoBack()
         {
-            var frame = (Frame)Window.Current.Content;
-            frame.CacheSize=0;
+            var frame = GetFrame();
 
             if (frame.CanGoBack)
             {
@@ -64,9 +49,18 @@ namespace IPTV.Service
 
         }
 
+        private Frame GetFrame()
+        {
+            var frame = Window.Current.Content as Frame;
+
+            if(frame != null)
+            {
+                return frame;
+            }
+            else
+            {
+                throw new InvalidCastException("Current content is not a frame.");
+            }
+        }
     }
-
-
-
-
 }

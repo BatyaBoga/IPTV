@@ -21,16 +21,19 @@ namespace IPTV.Views
     public sealed partial class AddPlaylistDialog : ContentDialog
     {
 
-        public AddPlaylistDialog(ObservableCollection<LinksInfo> links, int LinksInfoToEditId)
+        private AddPlaylistDialog()
         {
-            this.InitializeComponent();
+            InitializeComponent();
+        }
+        public AddPlaylistDialog(ObservableCollection<LinksInfo> links, LinksInfo LinksInfoToEditId) : this()
+        {
             this.DataContext = new AddListViewModel(links, LinksInfoToEditId);
         }
 
-        public AddPlaylistDialog(ObservableCollection<LinksInfo> links)
+        public AddPlaylistDialog(ObservableCollection<LinksInfo> links) : this()
         {
-            this.InitializeComponent();
             this.DataContext = new AddListViewModel(links);
+          
         }
 
 

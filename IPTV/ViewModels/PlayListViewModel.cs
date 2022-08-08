@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows.Input;
 using IPTV.Models;
 using Windows.Media.Core;
-using IPTV.Service;
+using IPTV.Services;
 
 namespace IPTV.ViewModels
 {
@@ -12,17 +12,21 @@ namespace IPTV.ViewModels
     {
         private List<Channel> channels;
 
+        private string playListName;
+
         private int selectedIndex;
 
         private string searchText;
 
-        private string playListName;
         public PlayListViewModel(LinksInfo playlist)
         {
-            this.channels = playlist.ChannellList;
-            this.playListName = playlist.Title;
+            channels = playlist.ChannellList;
+
+            playListName = playlist.Title;
+
             selectedIndex = 0;
-        }        
+        } 
+        
         public List<Channel> Channels
         {
             get 
@@ -35,28 +39,39 @@ namespace IPTV.ViewModels
                 return channels.Where(x => x.TvName.ToUpper().StartsWith(SearchText.ToUpper())).ToList();
             }
         }
+
         public int SelectedIndex
         {
             get
             {
-                return this.selectedIndex;
+                return selectedIndex;
             }
             set
             {
-                this.selectedIndex = value;
+                selectedIndex = value;
+
                 OnPropertyChanged();
+
                 OnPropertyChanged("SelectedChannel");
             }
         }
+
         public string SearchText
         {
-            get { return searchText; }
-            set { 
+            get 
+            { 
+                return searchText; 
+            }
+            set 
+            { 
                 searchText = value;
+
                 OnPropertyChanged();
+
                 OnPropertyChanged("Channels");
             }
         }
+
         public string PlayListName
         {
             get
@@ -66,23 +81,24 @@ namespace IPTV.ViewModels
             set
             {
                 playListName = value;
+
                 OnPropertyChanged();
             }
         }
+
         public MediaSource SelectedChannel
         {
             get 
             {
                 var uri = new Uri((selectedIndex >= 0) ? Channels[selectedIndex].TvStreamlink : null);
+
                 return MediaSource.CreateFromUri(uri); 
             }
         }
+
         public ICommand ReturnBack
         {
-            get
-            {
-                return new RelayCommand((_)=> NavigationService.Instance.GoBack());
-            }
+            get => new RelayCommand((_)=> NavigationService.Instance.GoBack()); 
         }
     }
 }

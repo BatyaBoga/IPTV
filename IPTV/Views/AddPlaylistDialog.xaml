@@ -5,35 +5,40 @@
     xmlns:local="using:IPTV.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewmodels="using:IPTV.ViewModels"
     xmlns:app="using:IPTV"
     mc:Ignorable="d"
     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-    RequestedTheme="{x:Bind Path=app:App.CurrentThemeForApp, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+    RequestedTheme="{x:Bind Path=app:App.CurrentThemeForApp, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+    CornerRadius="15">
 
-    <Grid Margin="0,0,9,-18">
-        <TextBox Text="{Binding Title,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+    <Grid Margin="0,0,9,-18" >
+        <Grid IsHitTestVisible="{Binding IsEnabledToEdit}" Opacity="{Binding Opacity}">
+            <TextBox Text="{Binding Title,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
                  Margin="70,34,0,152" HorizontalAlignment="Right" Width="312" CornerRadius="4,4,4,4"
-                 MaxLength="30"></TextBox>
-        
-        <TextBox Text="{Binding Link,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"  
-                 Margin="0,90,0,94" HorizontalAlignment="Right" Width="312" CornerRadius="4,4,4,4"></TextBox>
-        
-        <TextBlock HorizontalAlignment="Left" Margin="0,41,5,0" 
+                 MaxLength="30"/>
+
+            <TextBox Text="{Binding Link,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"  
+                 Margin="0,90,0,94" HorizontalAlignment="Right" Width="312" CornerRadius="4,4,4,4"/>
+
+            <TextBlock HorizontalAlignment="Left" Margin="0,41,5,0" 
                    TextWrapping="Wrap" x:Uid="title" VerticalAlignment="Top"/>
-        
-        <TextBlock HorizontalAlignment="Left" Margin="0,0,0,0" 
+
+            <TextBlock HorizontalAlignment="Left" Margin="0,0,0,0" 
                    TextWrapping="Wrap" Text="URL" VerticalAlignment="Center"/>
-        
-        <Button Background="Red" x:Uid="Cancel" Margin="0,155,100,0" 
+
+            <Button Background="Red" x:Uid="Cancel" Margin="0,155,100,0" 
                 Width="87" VerticalAlignment="Top" CornerRadius="15,15,15,15" Command="{Binding Cancel}" 
                 HorizontalAlignment="Right"/>
-        
-        <Button  Background="Green" Content="{Binding SaveBtn, Mode=OneWay}" 
+
+            <Button  Background="Green" Content="{Binding SaveBtn, Mode=OneWay}" 
                  Margin="260,155,0,0" Width="87" VerticalAlignment="Top" CornerRadius="15,15,15,15" 
                  IsEnabled="{Binding SaveBtnEnabled}" Command="{Binding Save}" HorizontalAlignment="Right"/>
 
-        <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding FormTitle}" VerticalAlignment="Top"/>
+            <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding FormTitle}" VerticalAlignment="Top"/>
+        </Grid>
+
+        <ProgressRing  Height="100" Width="100" IsActive="{Binding IsRingActive}" VerticalAlignment="Top" Margin="0,50,0,0"/>
+
     </Grid>
     
 </ContentDialog>

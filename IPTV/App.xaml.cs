@@ -1,55 +1,38 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using IPTV.Service;
 using IPTV.ViewModels;
+using Windows.Globalization;
 using IPTV.Views;
 using Windows.UI.Core;
+using IPTV.Services;
+using IPTV.Constants;
 
 namespace IPTV
 {
-
     sealed partial class App : Application
     {
-
         private static string currentThemeForApp;
+
         public App()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
-            this.Suspending += OnSuspending;
+            Suspending += OnSuspending;
 
-            object theme = ApplicationData.Current.LocalSettings.Values["themeSetting"];
-
-            object language = ApplicationData.Current.LocalSettings.Values["languageSetting"];
-
-            if (language != null)
-            {
-                Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = (string)language;
-            }
-
-            if (theme != null)
-            {
-                App.Current.RequestedTheme = (ApplicationTheme)(int)theme;
-            }
+            SetOptions();
 
             CurrentThemeForApp = Current.RequestedTheme.ToString();
 
-            NavigationService.Map.Add(typeof(PlayListViewModel), typeof(PlayListView));
+            DependencyContainer.RegisterDependecy<AddPlaylistDialog, AddListViewModel>();
 
-            NavigationService.Map.Add(typeof(OptionsViewModel), typeof(OptionsView));
+            DependencyContainer.RegisterDependecy<PlayListView, PlayListViewModel>();
 
-            DialogService.CurrentInstance.RegisterDialog<AddPlaylistDialog, AddListViewModel>();
+            DependencyContainer.RegisterDependecy<OptionsView, OptionsViewModel>();
         }
 
         public static string CurrentThemeForApp
@@ -60,10 +43,10 @@ namespace IPTV
                 currentThemeForApp = value;
             }
         }
+
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
             Frame rootFrame = Window.Current.Content as Frame;
-
 
             if (rootFrame == null)
             {
@@ -71,14 +54,8 @@ namespace IPTV
 
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
-                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
-                {
-                   
-                }
-
                 Window.Current.Content = rootFrame;
             }
-
 
             if (e.PrelaunchActivated == false)
             {
@@ -90,7 +67,6 @@ namespace IPTV
                 Window.Current.Activate();
             }
             
-
             SystemNavigationManager.GetForCurrentView().BackRequested += App_BackRequested;
 
             rootFrame.Navigated += (s, args) =>
@@ -105,20 +81,15 @@ namespace IPTV
                     SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
                         AppViewBackButtonVisibility.Collapsed;
                 }
-
             };
         }
+
         private void App_BackRequested(object sender, BackRequestedEventArgs e)
         {
-            Frame frame = Window.Current.Content as Frame;
+            NavigationService.Instance.GoBack();
 
-            if (frame.CanGoBack)
-            {
-                frame.GoBack();
-                e.Handled = true;
-            }
+            e.Handled = true;
         }
-
 
         void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
@@ -129,6 +100,23 @@ namespace IPTV
         {
             var deferral = e.SuspendingOperation.GetDeferral();
             deferral.Complete();
+        }
+
+        private void SetOptions()
+        {
+            object theme = ApplicationData.Current.LocalSettings.Values[Constant.ThemeSetting];
+
+            string language = ApplicationData.Current.LocalSettings.Values[Constant.LanguageSettings] as string;
+
+            if (language != null)
+            {
+                ApplicationLanguages.PrimaryLanguageOverride = language.ToString();
+            }
+
+            if (theme != null)
+            {
+                App.Current.RequestedTheme = (ApplicationTheme)Convert.ToInt32(theme);
+            }
         }
     }
 }

@@ -1,21 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using IPTV.ViewModels;
-using IPTV.Service;
 using IPTV.Models;
 using Windows.UI.Core;
+using Windows.ApplicationModel.Core;
 
 namespace IPTV.Views
 {
@@ -23,21 +12,20 @@ namespace IPTV.Views
     {
         public PlayListView()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if(e.Parameter != null)
             {
-                this.DataContext = new PlayListViewModel((LinksInfo)e.Parameter);
+                DataContext = new PlayListViewModel(e.Parameter as LinksInfo);
             }
         }
 
         protected async override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-
-            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 Player.MediaPlayer.Pause();
             });

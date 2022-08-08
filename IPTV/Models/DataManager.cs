@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System.Threading.Tasks;
 using Windows.Storage;
 using IPTV.Constants;
+using System.IO;
 
 namespace IPTV.Models
 {
@@ -10,20 +11,7 @@ namespace IPTV.Models
     {
         public static async Task SaveLinksInfo(LinksInfoList links)
         {
-            var storageFolder = ApplicationData.Current.LocalFolder;
-
-            StorageFile jsonFile;
-
-            try
-            {
-                jsonFile = await storageFolder.GetFileAsync(Constant.DataFileName);
-            }
-            catch
-            {
-                jsonFile = await storageFolder.CreateFileAsync(Constant.DataFileName);
-            }
-           
-
+            var jsonFile = await GetFile(Constant.DataFileName);
 
             string linksjson = JsonConvert.SerializeObject(links);
 
@@ -32,29 +20,31 @@ namespace IPTV.Models
 
         public static async Task<LinksInfoList> GetLinksInfo()
         {
-            var links = new LinksInfoList();
-
-            var storageFolder = ApplicationData.Current.LocalFolder;
-
-            StorageFile jsonFile;
-
-            try
-            {
-                jsonFile = await storageFolder.GetFileAsync(Constant.DataFileName);
-            }
-            catch
-            {
-                return links;
-            }
+            var jsonFile = await GetFile(Constant.DataFileName);
 
             string linksjson = await FileIO.ReadTextAsync(jsonFile);
 
             if (linksjson.Length == 0)
             {
-                return links;
+                return new LinksInfoList();
             }
 
-            return links =  JsonConvert.DeserializeObject<LinksInfoList>(linksjson);
+            return JsonConvert.DeserializeObject<LinksInfoList>(linksjson);
+        }
+
+
+        private static async Task<StorageFile> GetFile(string fileName)
+        {
+            var storageFolder = ApplicationData.Current.LocalFolder;
+
+            try
+            {
+                return await storageFolder.GetFileAsync(fileName);
+            }
+            catch (FileNotFoundException)
+            {
+                return await storageFolder.CreateFileAsync(fileName);
+            }  
 
         }
     }

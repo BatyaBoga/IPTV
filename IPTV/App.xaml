@@ -5,8 +5,6 @@
     xmlns:local="using:IPTV"
     xmlns:vm ="using:IPTV.ViewModels">
 
-
-
     <Application.Resources>
 
         <Style x:Key="MenuBtnStyle" TargetType="Button" >
@@ -16,7 +14,6 @@
             <Setter Property="Control.Height" Value="60" />
         </Style>
 
-
         <Style x:Key="MiniBtnStyle" TargetType="Button" >
             <Setter Property="Control.CornerRadius" Value="10,10,10,10" />
             <Setter Property="Control.BorderThickness" Value="2,2,2,2" />
@@ -24,8 +21,8 @@
             <Setter Property="Control.Height" Value="30" />
         </Style>
 
+
     </Application.Resources>
-    
 </Application>
 
 

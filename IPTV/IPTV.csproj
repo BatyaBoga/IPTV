@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>IPTV</RootNamespace>
     <AssemblyName>IPTV</AssemblyName>
-    <DefaultLanguage>en-Us</DefaultLanguage>
+    <DefaultLanguage>ru</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.19041.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
@@ -120,15 +120,18 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Constants\Constant.cs" />
+    <Compile Include="Managers\LanguageManager.cs" />
     <Compile Include="Models\DataManager.cs" />
     <Compile Include="Models\Channel.cs" />
     <Compile Include="Models\ChannelManager.cs" />
     <Compile Include="Models\HttpManager.cs" />
-    <Compile Include="Models\IHttpManager.cs" />
     <Compile Include="Models\LinksInfo.cs" />
+    <Compile Include="Services\DependencyContainer.cs" />
     <Compile Include="Services\DialogService.cs" />
+    <Compile Include="Managers\MessageDialogManager.cs" />
     <Compile Include="Services\NavigationService.cs" />
     <Compile Include="ViewModels\AddListViewModel.cs" />
+    <Compile Include="Managers\RegexCheck.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\OptionsViewModel.cs" />
     <Compile Include="ViewModels\PlayListViewModel.cs" />
@@ -198,7 +201,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.2.12</Version>
+      <Version>6.2.14</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.1</Version>

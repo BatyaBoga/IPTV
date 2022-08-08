@@ -3,35 +3,28 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using IPTV.Constants;
 
 namespace IPTV.Models
 {
     public static class ChannelManager
     {
-
-      
-
-  
-
-
-        public static  async Task<List<Channel>> GetChanelsAsync(string path)
+        public static async Task<List<Channel>> GetChanelsAsync(string path)
         {
             var chanels = new List<Channel>();
 
-            string request = String.Empty;
+            string request;
 
             try
             {
-              // request = await GetRequestAsync(path);
+               request = await HttpManager.GetRequestAsync(path);
             }
             catch(HttpRequestException)
             {
                 return chanels;
             }
-            
-            string pattern = @"tvg-logo=""(([^""]+)?)"".+,(.+)\s(https?\S+)";
 
-            foreach (Match m in Regex.Matches(request, pattern))
+            foreach (Match m in Regex.Matches(request, Constant.RegexForChnaels))
             {
                 chanels.Add(new Channel()
                 {

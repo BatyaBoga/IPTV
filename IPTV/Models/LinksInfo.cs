@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace IPTV.Models
 {
-    public class LinksInfo
+    public class LinksInfo : ICloneable
     {
         public string Link { get; set; }
 
@@ -11,6 +12,16 @@ namespace IPTV.Models
 
         [JsonIgnore]
         public  List<Channel> ChannellList { get; set; }
+
+        public object Clone()
+        {
+            return new LinksInfo()
+            {
+                Title = this.Title,
+                Link = this.Link,
+                ChannellList = this.ChannellList
+            };
+        }
     }
 
     public class LinksInfoList

@@ -1,52 +1,91 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using IPTV.Models;
-using IPTV.Service;
-using Windows.UI.Popups;
+using IPTV.Services;
+using IPTV.Managers;
+using IPTV.Constants;
 using Windows.ApplicationModel.Resources;
 
 namespace IPTV.ViewModels
 {
-    class AddListViewModel : ViewModel
+    public class AddListViewModel : ViewModel
     {
+        private readonly ObservableCollection<LinksInfo> links;
+
+        private readonly LinksInfo linkInfoToEdit;
+
+        private readonly ResourceLoader resload;
+
+        private bool isEnabledToEdit;
+
         private bool saveBtnEnabled;
-
-        private string link;
-
-        private string title;
-
-        private int linksInfoToEditId;
 
         private string formTitle;
 
         private string saveBtn;
 
-        private ObservableCollection<LinksInfo> links;
+        private double opacity;
 
         public AddListViewModel(ObservableCollection<LinksInfo> links)
         {
-            saveBtnEnabled = false;
-            var resourceLoader = ResourceLoader.GetForCurrentView();
-            FormTitle = resourceLoader.GetString("AddPlaylistMsg");
-            SaveBtn = resourceLoader.GetString("Add");
             this.links = links;
-            linksInfoToEditId = -1;
+
+            linkInfoToEdit = new LinksInfo();
+
+            isEnabledToEdit = true;
+
+            opacity = 1.0;
+
+            resload = ResourceLoader.GetForCurrentView();
+
+            InitializeField("AddPlaylistMsg", "Add");
         }
 
-        public AddListViewModel(ObservableCollection<LinksInfo> links, int LinksInfoToEditId)
+        public AddListViewModel(ObservableCollection<LinksInfo> links, LinksInfo link) : this(links)
         {
-            saveBtnEnabled = true;
-            this.links = links;
-            this.linksInfoToEditId = LinksInfoToEditId;
-            link = links[LinksInfoToEditId].Link;
-            title = links[LinksInfoToEditId].Title;
-            var resourceLoader = ResourceLoader.GetForCurrentView();
-            FormTitle = resourceLoader.GetString("EditPlaylistMsq");
-            SaveBtn = resourceLoader.GetString("Save");
+            InitializeField("EditPlaylistMsq", "Save");
+
+            linkInfoToEdit = link.Clone() as LinksInfo;
+
+            IsCorrect();
+        }
+
+        public bool IsEnabledToEdit
+        {
+            get
+            {
+                return isEnabledToEdit;
+            }
+            set
+            {
+                isEnabledToEdit = value;
+
+                OnPropertyChanged();
+
+                OnPropertyChanged("IsRingActive");
+            }
+        }
+
+        public bool IsRingActive
+        {
+            get => !IsEnabledToEdit;
+        }
+
+        public double Opacity
+        {
+            get
+            {
+                return opacity;
+            }
+            set
+            {
+                opacity = value;
+
+                OnPropertyChanged();
+            }
         }
 
         public string FormTitle
@@ -58,47 +97,67 @@ namespace IPTV.ViewModels
             set
             {
                 formTitle = value;
+
                 OnPropertyChanged();
             }
         }
 
         public string SaveBtn
         {
-            get { return saveBtn; }
+            get 
+            { 
+                return saveBtn; 
+            }
             set
             {
                 saveBtn = value;
-                OnPropertyChanged();
-            }
-        }
 
-        public string Title
-        {
-            get { return title; }
-            set { 
-                title = value; 
-                IsCorrect();
-                OnPropertyChanged();
-            }
-        }
-
-        public string Link
-        {
-            get { return link; }
-            set 
-            { 
-                link = value;
-                IsCorrect();
                 OnPropertyChanged();
             }
         }
 
         public bool SaveBtnEnabled
         {
-            get { return saveBtnEnabled; }
+            get 
+            {
+                return saveBtnEnabled; 
+            }
             set 
             {
                 saveBtnEnabled = value;
+
+                OnPropertyChanged();
+            }
+        }
+
+        public string Title
+        {
+            get 
+            { 
+                return linkInfoToEdit.Title; 
+            }
+            set 
+            {
+                linkInfoToEdit.Title = value; 
+
+                IsCorrect();
+
+                OnPropertyChanged();
+            }
+        }
+
+        public string Link
+        {
+            get 
+            { 
+                return linkInfoToEdit.Link; 
+            }
+            set 
+            {
+                linkInfoToEdit.Link = value;
+
+                IsCorrect();
+
                 OnPropertyChanged();
             }
         }
@@ -109,84 +168,82 @@ namespace IPTV.ViewModels
             {
                 return new RelayCommand(async (_) =>
                 {
-                    var linksInfo = new LinksInfo()
-                    {
-                        Link = link,
-                        Title = title,
-                        ChannellList = await ChannelManager.GetChanelsAsync(Link)
-                    };
+                    LoadState(true);
 
-                    await SaveLink(linksInfo);
+                    await SaveLink();
+
+                    LoadState(false);
                 });
             }
         }
 
         public ICommand Cancel
         {
-            get
-            {
-                return new RelayCommand((_) => DialogService.CurrentInstance.CloseDialog());
-            }
+            get => new RelayCommand((_) => DialogService.CurrentInstance.CloseDialog());
         }
 
-        private async Task SaveLink(LinksInfo linksInfo)
+        private void LoadState(bool state)
         {
-            
+            IsEnabledToEdit = !state;
 
-            if (linksInfo.ChannellList.Count > 0)
+            Opacity = state ? 0.5 : 1;
+        }
+
+        private async Task SaveLink()
+        {
+            var chnangeList = new Action(() =>links.Add(linkInfoToEdit));
+
+            if (linkInfoToEdit.ChannellList != null)
             {
-                if (linksInfoToEditId >= 0)
-                {
-                    links[linksInfoToEditId] = linksInfo;
-                    await SaveToFile();
-                    return;
-                }
-                else if((from item in links where item.Link == linksInfo.Link select item).Count() == 0 )
-                {
-                    links.Add(linksInfo);
-                    await SaveToFile();
-                    return;
-                }
+                chnangeList = new Action(()=> links[IndexOfEditLink()] = linkInfoToEdit);
             }
 
-            await new MessageDialog("Failed").ShowAsync();
-
-        }
-
-        private bool IsLink(string link)
-        {
-            string regex = @"https?:\/\/[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*).m3u";
-            return Regex.IsMatch(link, regex);
-        }
-
-        private bool IsGoodTitle(string title)
-        {
-            if(title == null) return false;
-
-
-            string regex = @"^\w+$";
-            return Regex.IsMatch(title, regex);
-        }
-
-        private void IsCorrect()
-        {
-            if (IsLink(Link) && IsGoodTitle(Title))
+            if (IsUniqueLink(linkInfoToEdit.Link))
             {
-                SaveBtnEnabled = true;
+                linkInfoToEdit.ChannellList = await ChannelManager.GetChanelsAsync(Link);
             }
-            else
+
+            if (linkInfoToEdit.ChannellList != null && linkInfoToEdit.ChannellList.Count > 0)
             {
-                SaveBtnEnabled = false;
-            }  
+                chnangeList.Invoke();
+
+                await SaveToFile();
+
+                return;
+            }
+
+            await MessageDialogManager.ShowInfoMsg("Failed");
+        }
+
+        private bool IsUniqueLink(string link)
+        {
+            return !(from item in links where item.Link == link select item).Any();
+        }
+
+        private int IndexOfEditLink()
+        {
+            return links.IndexOf((from item in links where item.ChannellList == linkInfoToEdit.ChannellList select item).FirstOrDefault());
         }
 
         private async Task SaveToFile()
         {
-            await new MessageDialog("Successfully").ShowAsync();
-
             await DataManager.SaveLinksInfo(new LinksInfoList() { Links = this.links.ToList() });
 
+            await MessageDialogManager.ShowInfoMsg("Successfully");
+
             DialogService.CurrentInstance.CloseDialog();
+        }
+
+        private void IsCorrect()
+        {
+            SaveBtnEnabled = RegexCheck.IsLink(Link) && RegexCheck.IsTitle(Title);
+        }
+
+        private void InitializeField(string title, string save)
+        {
+            FormTitle = resload.GetString(title);
+
+            SaveBtn = resload.GetString(save);
         }
     }
 }

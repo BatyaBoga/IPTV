@@ -138,6 +138,9 @@
   <data name="EditPlaylistMsq" xml:space="preserve">
     <value>Edit playlist</value>
   </data>
+  <data name="Failed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
   <data name="Language.Text" xml:space="preserve">
     <value>Language</value>
   </data>
@@ -155,6 +158,9 @@
   </data>
   <data name="Save" xml:space="preserve">
     <value>Save</value>
+  </data>
+  <data name="Successfully" xml:space="preserve">
+    <value>Successfully</value>
   </data>
   <data name="Theme.Text" xml:space="preserve">
     <value>Theme</value>
