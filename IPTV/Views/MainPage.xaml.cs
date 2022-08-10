@@ -1,4 +1,5 @@
 ﻿using Windows.UI.Xaml.Controls;
+using IPTV.Services;
 
 namespace IPTV
 {
@@ -7,6 +8,8 @@ namespace IPTV
         public MainPage()
         {
             InitializeComponent();
+
+            DataContext = ViewModelLocator.Instance.Main;
         }
     }
 }

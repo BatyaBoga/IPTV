@@ -1,60 +1,36 @@
 ﻿using System.Collections.Generic;
-using Windows.Storage;
 using Windows.ApplicationModel.Resources;
 using IPTV.Constants;
 using IPTV.Managers;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace IPTV.ViewModels
 {
-    public class OptionsViewModel : ViewModel
+    public class OptionsViewModel : ObservableObject
     {
         private bool isToogleOn;
 
-        private LanguageManager languageManager;
-
         private int selectedIndex;
 
-        public OptionsViewModel()
+        private readonly ILangugeManager languageManager;
+
+        private readonly IThemeManager themeManager;
+
+        public OptionsViewModel(ILangugeManager languageManager, IThemeManager themeManager)
         {
-            SetToogleState();
 
-            languageManager = new LanguageManager();
+            this.languageManager = languageManager;  
 
-            selectedIndex = languageManager.SelectedLanguageIndex();
+            this.themeManager = themeManager;
+
+            isToogleOn = this.themeManager.IsLightTheme;
+
+            selectedIndex = this.languageManager.SelectedLanguageIndex();
         }
 
-        public string ToogleOn
+        public Dictionary<string,string>.ValueCollection Languages
         {
-            get => ResourceLoader.GetForCurrentView().GetString(Constant.LightTheme); 
-        }
-
-        public bool IsToogleOn
-        {
-            get
-            {
-                return isToogleOn;
-            }
-            set 
-            {
-                isToogleOn = value;
-
-                ChangeTheme(value);
-
-                OnPropertyChanged();
-            }
-        }
-
-        public Dictionary<string,string> Languages
-        {
-            get
-            {
-                return languageManager.languages;
-            } 
-            set
-            {
-                languageManager.languages = value;
-                OnPropertyChanged();
-            }
+            get => languageManager.Languages.Values; 
         }
 
         public int SelectedIndex
@@ -65,49 +41,36 @@ namespace IPTV.ViewModels
             }
             set
             {
-                if (value != selectedIndex)
+                if(SetProperty(ref selectedIndex, value))
+                languageManager.ChangeLanguage(selectedIndex);
+            }
+        }
+
+        public string ToogleOn
+        {
+            get => ResourceLoader.GetForCurrentView().GetString(Constant.LightTheme);
+        }
+
+        public bool IsToogleOn
+        {
+            get
+            {
+                return isToogleOn;
+            }
+            set 
+            {
+                if(SetProperty(ref isToogleOn, value))
                 {
-                    selectedIndex = value;
+                    themeManager.ChangeTheme(value);
 
-                    languageManager.ChnageLanguage(selectedIndex);
-
-                    OnPropertyChanged();
-                }  
+                    OnPropertyChanged(nameof(CurrentTheme));
+                }
             }
         }
 
         public string CurrentTheme
         {
-            get
-            {
-                return App.CurrentThemeForApp;
-            }
-            set
-            {
-                App.CurrentThemeForApp = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        private void SetToogleState()
-        {
-            if (App.CurrentThemeForApp == Constant.LightTheme)
-            {
-                isToogleOn = true;
-            }
-            else
-            {
-                isToogleOn = false;
-            }
-
-        }
-
-        private void ChangeTheme(bool theme)
-        {
-            CurrentTheme = theme ? Constant.LightTheme : Constant.DarkTheme;
-
-            ApplicationData.Current.LocalSettings.Values[Constant.ThemeSetting] = theme ? 0: 1;
+            get => ThemeManager.CurrentThemeForApp;  
         }
     }
 }

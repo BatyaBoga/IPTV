@@ -5,10 +5,11 @@ using System.Windows.Input;
 using IPTV.Models;
 using Windows.Media.Core;
 using IPTV.Services;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace IPTV.ViewModels
 {
-    public class PlayListViewModel : ViewModel
+    public class PlayListViewModel : ObservableObject
     {
         private List<Channel> channels;
 
@@ -18,26 +19,30 @@ namespace IPTV.ViewModels
 
         private string searchText;
 
-        public PlayListViewModel(LinksInfo playlist)
-        {
-            channels = playlist.ChannellList;
+        private readonly INavigationService navigation;
 
-            playListName = playlist.Title;
+        public PlayListViewModel(INavigationService navigation)
+        {
+            this.navigation = navigation;
 
             selectedIndex = 0;
-        } 
+
+            searchText = String.Empty;
+        }
+        
+        public LinksInfo PlayList
+        {
+            set
+            {
+                channels = value.ChannellList;
+
+                playListName = value.Title;
+            }
+        }
         
         public List<Channel> Channels
         {
-            get 
-            {
-                if(searchText == null)
-                {
-                    return channels;
-                }
-
-                return channels.Where(x => x.TvName.ToUpper().StartsWith(SearchText.ToUpper())).ToList();
-            }
+            get => searchText == String.Empty ? channels : FilterChannels();
         }
 
         public int SelectedIndex
@@ -48,11 +53,8 @@ namespace IPTV.ViewModels
             }
             set
             {
-                selectedIndex = value;
-
-                OnPropertyChanged();
-
-                OnPropertyChanged("SelectedChannel");
+                if(SetProperty(ref selectedIndex, value))
+                OnPropertyChanged(nameof(SelectedChannel));
             }
         }
 
@@ -64,26 +66,14 @@ namespace IPTV.ViewModels
             }
             set 
             { 
-                searchText = value;
-
-                OnPropertyChanged();
-
-                OnPropertyChanged("Channels");
+                if(SetProperty(ref searchText, value))
+                OnPropertyChanged(nameof(Channels));
             }
         }
 
         public string PlayListName
         {
-            get
-            {
-                return playListName;
-            }
-            set
-            {
-                playListName = value;
-
-                OnPropertyChanged();
-            }
+            get => playListName; 
         }
 
         public MediaSource SelectedChannel
@@ -98,7 +88,12 @@ namespace IPTV.ViewModels
 
         public ICommand ReturnBack
         {
-            get => new RelayCommand((_)=> NavigationService.Instance.GoBack()); 
+            get => new RelayCommand((_) => navigation.GoBack()); 
+        }
+
+        private List<Channel> FilterChannels()
+        {
+           return channels.Where(x => x.TvName.ToUpper().StartsWith(SearchText.ToUpper())).ToList();
         }
     }
 }

@@ -24,12 +24,14 @@ namespace IPTV.Models
 
             string linksjson = await FileIO.ReadTextAsync(jsonFile);
 
-            if (linksjson.Length == 0)
+            var linksInfoList = new LinksInfoList();
+
+            if (linksjson.Length != 0)
             {
-                return new LinksInfoList();
+                linksInfoList = JsonConvert.DeserializeObject<LinksInfoList>(linksjson);
             }
 
-            return JsonConvert.DeserializeObject<LinksInfoList>(linksjson);
+            return linksInfoList;
         }
 
 
@@ -37,14 +39,20 @@ namespace IPTV.Models
         {
             var storageFolder = ApplicationData.Current.LocalFolder;
 
+            StorageFile storageFile;
+
             try
             {
-                return await storageFolder.GetFileAsync(fileName);
+                storageFile = await storageFolder.GetFileAsync(fileName);
             }
             catch (FileNotFoundException)
-            {
-                return await storageFolder.CreateFileAsync(fileName);
-            }  
+            {               
+                storageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Data/Links.json"));
+
+                await storageFile.CopyAsync(ApplicationData.Current.LocalFolder, fileName);
+            }
+            
+            return storageFile;
 
         }
     }

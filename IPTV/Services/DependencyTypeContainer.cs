@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace IPTV.Services
 {
-    public static class DependencyContainer
+    public static class DependencyTypeContainer
     {
         private static Dictionary<Type, Type> dependency = new Dictionary<Type, Type>();
 
@@ -14,14 +14,11 @@ namespace IPTV.Services
 
         public static Type GetDependecyType(Type TViewModel)
         {
-            try
-            {
-                return dependency[TViewModel];
-            }
-            catch (KeyNotFoundException)
-            {
-                return null;
-            }
+            Type dependecyType;
+
+            dependency.TryGetValue(TViewModel, out dependecyType);
+
+            return dependecyType;
         }
     }
 }

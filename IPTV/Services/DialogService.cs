@@ -4,20 +4,13 @@ using Windows.UI.Xaml.Controls;
 
 namespace IPTV.Services
 {
-    sealed class DialogService 
+    public class DialogService : IDialogService
     {
-        private readonly static Lazy<DialogService> lazyInstance = 
-            new Lazy<DialogService>(() => new DialogService(), true);
-
-        public static DialogService CurrentInstance => lazyInstance.Value;
-
-        private DialogService() { }
-
         private ContentDialog dialog;
 
         public async Task ShowDialog<TViewModel>(params object[] parametr)
         {
-            var type = DependencyContainer.GetDependecyType(typeof(TViewModel));
+            var type = DependencyTypeContainer.GetDependecyType(typeof(TViewModel));
 
             if(type != null)
             {

@@ -8,40 +8,49 @@ using Windows.Storage;
 
 namespace IPTV.Managers
 {
-    public class LanguageManager
+    public class LanguageManager : ILangugeManager
     {
-        public Dictionary<string, string> languages = new Dictionary<string, string>();
+        private Dictionary<string, string> languages = new Dictionary<string, string>();
 
-        public LanguageManager()
+        private INavigationService navigation;
+        public LanguageManager(INavigationService navigation)
         {
+            this.navigation = navigation;
+
             languages.Add("en-Us", "English");
 
             languages.Add("ru", "Русский");
         }
-        public async void ChnageLanguage(int languageIndex)
+
+        public Dictionary<string, string> Languages
         {
-            var culture = languages.ElementAt(languageIndex).Key;
+            get { return languages; }
+        }
 
-            ApplicationLanguages.PrimaryLanguageOverride = culture;
+        public async void ChangeLanguage(int languageIndex)
+        {
+           var culture = languages.ElementAt(languageIndex).Key;
 
-            ApplicationData.Current.LocalSettings.Values[Constant.LanguageSettings] = culture;
+           ApplicationLanguages.PrimaryLanguageOverride = culture;
 
-            await NavigationService.Instance.Refresh<OptionsViewModel>();
+           await navigation.Refresh<OptionsViewModel>();
         }
 
         public int SelectedLanguageIndex()
         {
             string languageName = ApplicationLanguages.PrimaryLanguageOverride;
 
+            int selectedIndex = 0;
+
             for (int i = 0; i < languages.Count; i++)
             {
                 if (languages.ElementAt(i).Key == languageName)
                 {
-                     return i;
+                     selectedIndex = i;
                 }
             }
 
-            return 0; 
+            return selectedIndex; 
         }
     }
 }

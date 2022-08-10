@@ -6,18 +6,22 @@ using System.Windows.Input;
 using IPTV.Models;
 using IPTV.Services;
 using IPTV.Managers;
-using IPTV.Constants;
 using Windows.ApplicationModel.Resources;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace IPTV.ViewModels
 {
-    public class AddListViewModel : ViewModel
+    public class AddListViewModel : ObservableObject
     {
-        private readonly ObservableCollection<LinksInfo> links;
-
-        private readonly LinksInfo linkInfoToEdit;
-
         private readonly ResourceLoader resload;
+
+        private readonly IMessageDialog messageDialog = new MessageDialogManager();
+
+        private readonly IDialogService dialogService = new DialogService();
+
+        private ObservableCollection<LinksInfo> links;
+
+        private LinksInfo linkInfoToEdit;
 
         private bool isEnabledToEdit;
 
@@ -29,11 +33,11 @@ namespace IPTV.ViewModels
 
         private double opacity;
 
-        public AddListViewModel(ObservableCollection<LinksInfo> links)
+        public AddListViewModel(IDialogService dialogService, IMessageDialog messageDialog)
         {
-            this.links = links;
+            this.dialogService = dialogService;
 
-            linkInfoToEdit = new LinksInfo();
+            this.messageDialog = messageDialog;
 
             isEnabledToEdit = true;
 
@@ -41,16 +45,7 @@ namespace IPTV.ViewModels
 
             resload = ResourceLoader.GetForCurrentView();
 
-            InitializeField("AddPlaylistMsg", "Add");
-        }
-
-        public AddListViewModel(ObservableCollection<LinksInfo> links, LinksInfo link) : this(links)
-        {
-            InitializeField("EditPlaylistMsq", "Save");
-
-            linkInfoToEdit = link.Clone() as LinksInfo;
-
-            IsCorrect();
+            links = MainViewModel.Links;
         }
 
         public bool IsEnabledToEdit
@@ -61,11 +56,8 @@ namespace IPTV.ViewModels
             }
             set
             {
-                isEnabledToEdit = value;
-
-                OnPropertyChanged();
-
-                OnPropertyChanged("IsRingActive");
+                if(SetProperty(ref isEnabledToEdit, value))
+                OnPropertyChanged(nameof(IsRingActive));
             }
         }
 
@@ -82,9 +74,7 @@ namespace IPTV.ViewModels
             }
             set
             {
-                opacity = value;
-
-                OnPropertyChanged();
+                SetProperty(ref opacity, value);
             }
         }
 
@@ -96,9 +86,7 @@ namespace IPTV.ViewModels
             }
             set
             {
-                formTitle = value;
-
-                OnPropertyChanged();
+                SetProperty(ref formTitle, value);
             }
         }
 
@@ -110,9 +98,7 @@ namespace IPTV.ViewModels
             }
             set
             {
-                saveBtn = value;
-
-                OnPropertyChanged();
+                SetProperty(ref saveBtn, value);
             }
         }
 
@@ -124,9 +110,7 @@ namespace IPTV.ViewModels
             }
             set 
             {
-                saveBtnEnabled = value;
-
-                OnPropertyChanged();
+                SetProperty(ref saveBtnEnabled, value);
             }
         }
 
@@ -138,11 +122,14 @@ namespace IPTV.ViewModels
             }
             set 
             {
-                linkInfoToEdit.Title = value; 
+                if(linkInfoToEdit.Title != value)
+                {
+                    linkInfoToEdit.Title = value;
+                    
+                    IsCorrect();
 
-                IsCorrect();
-
-                OnPropertyChanged();
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -154,11 +141,14 @@ namespace IPTV.ViewModels
             }
             set 
             {
-                linkInfoToEdit.Link = value;
+                if(linkInfoToEdit.Link != value)
+                {
+                    linkInfoToEdit.Link = value;
+                
+                    IsCorrect();
 
-                IsCorrect();
-
-                OnPropertyChanged();
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -179,9 +169,24 @@ namespace IPTV.ViewModels
 
         public ICommand Cancel
         {
-            get => new RelayCommand((_) => DialogService.CurrentInstance.CloseDialog());
+            get => new RelayCommand((_) => dialogService.CloseDialog());
         }
 
+        public void ConfigureToAdd()
+        {
+            InitializeField("AddPlaylistMsg", "Add");
+
+            linkInfoToEdit = new LinksInfo();
+        }
+
+        public void ConfigureToEdit(LinksInfo link)
+        {
+            InitializeField("EditPlaylistMsq", "Save");
+
+            linkInfoToEdit = link.Clone() as LinksInfo;
+
+            IsCorrect();
+        }
         private void LoadState(bool state)
         {
             IsEnabledToEdit = !state;
@@ -212,7 +217,7 @@ namespace IPTV.ViewModels
                 return;
             }
 
-            await MessageDialogManager.ShowInfoMsg("Failed");
+            await messageDialog.ShowInfoMsg("Failed");
         }
 
         private bool IsUniqueLink(string link)
@@ -229,9 +234,9 @@ namespace IPTV.ViewModels
         {
             await DataManager.SaveLinksInfo(new LinksInfoList() { Links = this.links.ToList() });
 
-            await MessageDialogManager.ShowInfoMsg("Successfully");
+            await messageDialog.ShowInfoMsg("Successfully");
 
-            DialogService.CurrentInstance.CloseDialog();
+            dialogService.CloseDialog();
         }
 
         private void IsCorrect()

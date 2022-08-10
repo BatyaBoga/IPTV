@@ -5,16 +5,16 @@ using Windows.UI.Popups;
 
 namespace IPTV.Managers
 {
-    public static class MessageDialogManager
+    public class MessageDialogManager : IMessageDialog
     {
-        private static readonly ResourceLoader resload;
+        private readonly ResourceLoader resload;
 
-        static MessageDialogManager()
+        public MessageDialogManager()
         {
             resload = ResourceLoader.GetForCurrentView();
         }
 
-        public static async Task ShowInfoMsg(string msg)
+        public async Task ShowInfoMsg(string msg)
         {
             var dialog = new MessageDialog(resload.GetString(msg));
 
@@ -23,7 +23,7 @@ namespace IPTV.Managers
             await dialog.ShowAsync();
         }
 
-        public static async Task ShureMsg(string msg, UICommandInvokedHandler onYesClick)
+        public async Task ShureMsg(string msg, UICommandInvokedHandler onYesClick)
         {
             var dialog = new MessageDialog(resload.GetString(msg));
 

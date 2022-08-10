@@ -13,16 +13,13 @@ namespace IPTV.Models
         {
             var chanels = new List<Channel>();
 
-            string request;
+            string request = String.Empty;
 
             try
             {
-               request = await HttpManager.GetRequestAsync(path);
+                request = await HttpManager.GetRequestAsync(path);
             }
-            catch(HttpRequestException)
-            {
-                return chanels;
-            }
+            catch (HttpRequestException) { }
 
             foreach (Match m in Regex.Matches(request, Constant.RegexForChnaels))
             {

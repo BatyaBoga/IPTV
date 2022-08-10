@@ -6,47 +6,38 @@ using System.Windows.Input;
 using IPTV.Models;
 using IPTV.Services;
 using IPTV.Managers;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace IPTV.ViewModels
 {
-    public class MainViewModel : ViewModel
+    public class MainViewModel : ObservableObject
     {
-        private static ObservableCollection<LinksInfo> links = new ObservableCollection<LinksInfo>();
+        private readonly INavigationService navigation;
 
-        private int selectedIndex;
+        private readonly IDialogService dialogServise;
 
-        public MainViewModel()
+        private readonly IMessageDialog messageDialog;
+
+        public MainViewModel(INavigationService navigation, IDialogService dialog, IMessageDialog messageDialog)
         {
+            Links = new ObservableCollection<LinksInfo>();
+
             InitializeLinks();
 
-            selectedIndex = -1;
+            this.navigation = navigation;
+
+            this.dialogServise = dialog;
+
+            this.messageDialog = messageDialog;
         }
 
-        public ObservableCollection<LinksInfo> Links
-        {
-            get 
-            { 
-                return links; 
-            }
-            set 
-            { 
-                links = value; 
-
-                OnPropertyChanged();
-            }
-        }
+        public static ObservableCollection<LinksInfo> Links { get; set; }
 
         public int SelectedIndex
         {
-            get
-            {
-                return selectedIndex;
-            }
             set
             {
-                selectedIndex = value;
-
-                OpenPlaylist();
+                OpenPlaylist(value);  
             }
         }
 
@@ -60,9 +51,7 @@ namespace IPTV.ViewModels
 
                     linksInfoElement.ChannellList = await ChannelManager.GetChanelsAsync(link.ToString());
 
-                    await MessageDialogManager.ShowInfoMsg("UpdateMsg");
-                    
-                    OnPropertyChanged("Links");
+                    await messageDialog.ShowInfoMsg("UpdateMsg");
                 });
             }
         }
@@ -73,7 +62,7 @@ namespace IPTV.ViewModels
             {
                 return new RelayCommand(async (link) =>
                 {
-                    await DialogService.CurrentInstance.ShowDialog<AddListViewModel>(links, GetLinksInfoElementBylink(link));
+                    await dialogServise.ShowDialog<AddListViewModel>(GetLinksInfoElementBylink(link));
                 });
             }
         }
@@ -84,44 +73,40 @@ namespace IPTV.ViewModels
             {
                 return new RelayCommand(async(link) =>
                 {  
-                    await MessageDialogManager.ShureMsg("DeleteMsg", (_) => DeletePlaylist(link));
-
-                    OnPropertyChanged("Links");
+                    await messageDialog.ShureMsg("DeleteMsg", async(_) => await DeletePlaylist(link));
                 });
             }
         }
 
         public ICommand AddLinks
         {
-            get => new RelayCommand(async(_) => await DialogService.CurrentInstance.ShowDialog<AddListViewModel>(links));
+            get => new RelayCommand(async(_) => await dialogServise.ShowDialog<AddListViewModel>());
         }
 
         public ICommand OpenOptions
         {
-            get => new RelayCommand((_) => NavigationService.Instance.Navigate<OptionsViewModel>());   
+            get => new RelayCommand((_) => navigation.Navigate<OptionsViewModel>());   
         }
 
-        private void OpenPlaylist()
+        private void OpenPlaylist(int selectedindex)
         {  
-            NavigationService.Instance.Navigate<PlayListViewModel>(links[selectedIndex]);
+            navigation.Navigate<PlayListViewModel>(Links[selectedindex]);
         }
 
-        private async void DeletePlaylist(object link)
+        private async Task DeletePlaylist(object link)
         {
-           links.Remove(GetLinksInfoElementBylink(link));
+           Links.Remove(GetLinksInfoElementBylink(link));
                
-           await DataManager.SaveLinksInfo(new LinksInfoList() { Links = links.ToList() });
+           await DataManager.SaveLinksInfo(new LinksInfoList() { Links = Links.ToList() });
         }
 
         private LinksInfo GetLinksInfoElementBylink(object bindObject)
         {
-            return (from item in links where item.Link == bindObject.ToString() select item).FirstOrDefault();
+            return (from item in Links where item.Link == bindObject.ToString() select item).FirstOrDefault();
         }
 
         private void InitializeLinks()
         {
-            if (links.Count > 0) return;
-
             Task.Run(async () =>
             {
                 var linkslist = await DataManager.GetLinksInfo();
@@ -131,7 +116,7 @@ namespace IPTV.ViewModels
                     foreach (var item in linkslist.Links)
                     {
                         item.ChannellList = await ChannelManager.GetChanelsAsync(item.Link);
-                        links.Add(item);
+                        Links.Add(item);
                     }
                 }
             }).Wait();

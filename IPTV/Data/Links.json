@@ -1,0 +1,32 @@
+{
+    "Links": [
+        {
+            "Link": "https://iptv-org.github.io/iptv/countries/ua.m3u",
+            "Title": "UKRAINE"
+        },
+        {
+            "Link": "https://iptv-org.github.io/iptv/index.m3u",
+            "Title": "General"
+        },
+        {
+            "Link": "https://iptv-org.github.io/iptv/index.nsfw.m3u",
+            "Title": "Includes adult channels"
+        },
+        {
+            "Link": "https://iptv-org.github.io/iptv/index.category.m3u",
+            "Title": "Grouped by category"
+        },
+        {
+            "Link": "https://iptv-org.github.io/iptv/index.country.m3u",
+            "Title": "Grouped by country"
+        },
+        {
+            "Link": "https://iptv-org.github.io/iptv/index.language.m3u",
+            "Title": "Grouped by language"
+        },
+        {
+            "Link": "https://iptv-org.github.io/iptv/index.region.m3u",
+            "Title": "Grouped by region"
+        }
+    ]
+}

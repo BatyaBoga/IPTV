@@ -3,11 +3,11 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:IPTV.Views"
-    xmlns:app="using:IPTV"
+    xmlns:manager="using:IPTV.Managers"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    RequestedTheme="{x:Bind Path=app:App.CurrentThemeForApp, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+    RequestedTheme="{x:Bind Path=manager:ThemeManager.CurrentThemeForApp, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>

@@ -29,6 +29,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
+    <Optimize>false</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -120,15 +121,21 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Constants\Constant.cs" />
+    <Compile Include="Managers\ILangugeManager.cs" />
+    <Compile Include="Managers\IMessageDialog.cs" />
+    <Compile Include="Managers\IThemeManager.cs" />
     <Compile Include="Managers\LanguageManager.cs" />
+    <Compile Include="Managers\ThemeManager.cs" />
     <Compile Include="Models\DataManager.cs" />
     <Compile Include="Models\Channel.cs" />
     <Compile Include="Models\ChannelManager.cs" />
     <Compile Include="Models\HttpManager.cs" />
     <Compile Include="Models\LinksInfo.cs" />
-    <Compile Include="Services\DependencyContainer.cs" />
+    <Compile Include="Services\DependencyTypeContainer.cs" />
     <Compile Include="Services\DialogService.cs" />
     <Compile Include="Managers\MessageDialogManager.cs" />
+    <Compile Include="Services\IDialogService.cs" />
+    <Compile Include="Services\INavigationService.cs" />
     <Compile Include="Services\NavigationService.cs" />
     <Compile Include="ViewModels\AddListViewModel.cs" />
     <Compile Include="Managers\RegexCheck.cs" />
@@ -136,6 +143,7 @@
     <Compile Include="ViewModels\OptionsViewModel.cs" />
     <Compile Include="ViewModels\PlayListViewModel.cs" />
     <Compile Include="ViewModels\ViewModel.cs" />
+    <Compile Include="Services\ViewModelLocator.cs" />
     <Compile Include="Views\AddPlaylistDialog.xaml.cs">
       <DependentUpon>AddPlaylistDialog.xaml</DependentUpon>
     </Compile>
@@ -195,10 +203,16 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm">
+      <Version>8.0.0</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers">
       <Version>6.0.0</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection">
+      <Version>6.0.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.14</Version>
@@ -214,6 +228,12 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\ru-Ru\Resources.resw" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="Data\Links.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

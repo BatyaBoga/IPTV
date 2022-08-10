@@ -2,18 +2,13 @@
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace IPTV.Services
 {
-    sealed class NavigationService
+    public class NavigationService : INavigationService
     {
-        private NavigationService() { }
-
-        private static readonly Lazy<NavigationService> instance =
-            new Lazy<NavigationService>(() => new NavigationService());
-
-        public static NavigationService Instance => instance.Value;
-
+        private SuppressNavigationTransitionInfo suppress = null;
         public void Navigate<TViewModel>()
         {
             Navigate<TViewModel>(null);
@@ -21,21 +16,25 @@ namespace IPTV.Services
 
         public void Navigate<TViewModel>(object parameter)
         {
-            var type = DependencyContainer.GetDependecyType(typeof(TViewModel));
+            var type = DependencyTypeContainer.GetDependecyType(typeof(TViewModel));
 
             if (type != null) { 
 
-                GetFrame().Navigate(type, parameter);  
+                GetFrame().Navigate(type, parameter, suppress);  
             }
         }
 
         public async Task Refresh<TViewModel>()
         {
-            Navigate<TViewModel>(DateTime.Now.Ticks);
+            suppress = new SuppressNavigationTransitionInfo();
+
+            Navigate<TViewModel>();
 
             await Task.Delay(100);
 
             GoBack();
+
+            suppress = null;
         }
 
         public void GoBack()
@@ -46,7 +45,6 @@ namespace IPTV.Services
             {
                 frame.GoBack();
             }
-
         }
 
         private Frame GetFrame()
