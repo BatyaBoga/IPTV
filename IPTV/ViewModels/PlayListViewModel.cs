@@ -6,6 +6,7 @@ using IPTV.Models;
 using Windows.Media.Core;
 using IPTV.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace IPTV.ViewModels
 {
@@ -81,14 +82,15 @@ namespace IPTV.ViewModels
             get 
             {
                 var uri = new Uri((selectedIndex >= 0) ? Channels[selectedIndex].TvStreamlink : null);
-
-                return MediaSource.CreateFromUri(uri); 
+                  
+                var a = MediaSource.CreateFromUri(uri);
+                return a;
             }
         }
 
         public ICommand ReturnBack
         {
-            get => new RelayCommand((_) => navigation.GoBack()); 
+            get => new RelayCommand(() => navigation.GoBack()); 
         }
 
         private List<Channel> FilterChannels()

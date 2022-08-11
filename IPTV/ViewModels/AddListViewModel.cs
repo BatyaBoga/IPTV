@@ -8,6 +8,7 @@ using IPTV.Services;
 using IPTV.Managers;
 using Windows.ApplicationModel.Resources;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace IPTV.ViewModels
 {
@@ -156,7 +157,7 @@ namespace IPTV.ViewModels
         {
             get
             {
-                return new RelayCommand(async (_) =>
+                return new RelayCommand(async () =>
                 {
                     LoadState(true);
 
@@ -169,7 +170,7 @@ namespace IPTV.ViewModels
 
         public ICommand Cancel
         {
-            get => new RelayCommand((_) => dialogService.CloseDialog());
+            get => new RelayCommand(() => dialogService.CloseDialog());
         }
 
         public void ConfigureToAdd()

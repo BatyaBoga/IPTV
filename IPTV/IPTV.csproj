@@ -142,7 +142,6 @@
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\OptionsViewModel.cs" />
     <Compile Include="ViewModels\PlayListViewModel.cs" />
-    <Compile Include="ViewModels\ViewModel.cs" />
     <Compile Include="Services\ViewModelLocator.cs" />
     <Compile Include="Views\AddPlaylistDialog.xaml.cs">
       <DependentUpon>AddPlaylistDialog.xaml</DependentUpon>

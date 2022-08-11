@@ -7,6 +7,7 @@ using IPTV.Models;
 using IPTV.Services;
 using IPTV.Managers;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace IPTV.ViewModels
 {
@@ -45,7 +46,7 @@ namespace IPTV.ViewModels
         {
             get
             {
-                return new RelayCommand(async (link) =>
+                return new RelayCommand<string>(async (link) =>
                 {
                     var linksInfoElement = GetLinksInfoElementBylink(link);
 
@@ -60,7 +61,7 @@ namespace IPTV.ViewModels
         {
             get
             {
-                return new RelayCommand(async (link) =>
+                return new RelayCommand<string>(async (link) =>
                 {
                     await dialogServise.ShowDialog<AddListViewModel>(GetLinksInfoElementBylink(link));
                 });
@@ -71,7 +72,7 @@ namespace IPTV.ViewModels
         {
             get
             {
-                return new RelayCommand(async(link) =>
+                return new RelayCommand<string>(async(link) =>
                 {  
                     await messageDialog.ShureMsg("DeleteMsg", async(_) => await DeletePlaylist(link));
                 });
@@ -80,12 +81,12 @@ namespace IPTV.ViewModels
 
         public ICommand AddLinks
         {
-            get => new RelayCommand(async(_) => await dialogServise.ShowDialog<AddListViewModel>());
+            get => new RelayCommand(async() => await dialogServise.ShowDialog<AddListViewModel>());
         }
 
         public ICommand OpenOptions
         {
-            get => new RelayCommand((_) => navigation.Navigate<OptionsViewModel>());   
+            get => new RelayCommand(() => navigation.Navigate<OptionsViewModel>());   
         }
 
         private void OpenPlaylist(int selectedindex)

@@ -24,7 +24,7 @@ namespace IPTV.Services
               .AddSingleton<OptionsViewModel>()
               .AddSingleton<MainViewModel>()
               .AddSingleton<AddListViewModel>()
-              .AddTransient<PlayListViewModel>()
+              .AddSingleton<PlayListViewModel>()
               .BuildServiceProvider());
         }
 
