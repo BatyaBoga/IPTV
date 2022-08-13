@@ -1,11 +1,11 @@
 ﻿using System;
+using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using IPTV.ViewModels;
-using IPTV.Models;
-using IPTV.Services;
-using Windows.UI.Core;
 using Windows.ApplicationModel.Core;
+using IPTV.Models.Model;
+using IPTV.ViewModels;
+using IPTV.Services;
 
 namespace IPTV.Views
 {
@@ -21,9 +21,8 @@ namespace IPTV.Views
             if(e.Parameter != null)
             {
                 PlayListViewModel viewmodel = ViewModelLocator.Instance.PlayList;
-                viewmodel.PlayList = e.Parameter as LinksInfo;
-                DataContext = viewmodel;
-                
+                viewmodel.PlayList = e.Parameter as Playlist;
+                DataContext = viewmodel; 
             }
         }
 

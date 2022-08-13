@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using IPTV.Models;
-using IPTV.Services;
-using IPTV.Managers;
+using System.Collections.ObjectModel;
 using Windows.ApplicationModel.Resources;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using IPTV.Services;
+using IPTV.Interfaces;
+using IPTV.Models.Model;
 
 namespace IPTV.ViewModels
 {
@@ -20,9 +20,15 @@ namespace IPTV.ViewModels
 
         private readonly IDialogService dialogService = new DialogService();
 
-        private ObservableCollection<LinksInfo> links;
+        private readonly IIptvManager manager;
 
-        private LinksInfo linkInfoToEdit;
+        private ObservableCollection<Playlist> playlistCollection;
+
+        private string oldlink;
+
+        private string title;
+
+        private string link;
 
         private bool isEnabledToEdit;
 
@@ -34,11 +40,13 @@ namespace IPTV.ViewModels
 
         private double opacity;
 
-        public AddListViewModel(IDialogService dialogService, IMessageDialog messageDialog)
+        public AddListViewModel(IDialogService dialogService, IMessageDialog messageDialog, IIptvManager manager)
         {
             this.dialogService = dialogService;
 
             this.messageDialog = messageDialog;
+
+            this.manager = manager;
 
             isEnabledToEdit = true;
 
@@ -46,7 +54,7 @@ namespace IPTV.ViewModels
 
             resload = ResourceLoader.GetForCurrentView();
 
-            links = MainViewModel.Links;
+            playlistCollection = MainViewModel.PlaylistCollection;
         }
 
         public bool IsEnabledToEdit
@@ -119,17 +127,13 @@ namespace IPTV.ViewModels
         {
             get 
             { 
-                return linkInfoToEdit.Title; 
+                return title; 
             }
             set 
             {
-                if(linkInfoToEdit.Title != value)
-                {
-                    linkInfoToEdit.Title = value;
-                    
+                if(SetProperty(ref title, value))
+                {   
                     IsCorrect();
-
-                    OnPropertyChanged();
                 }
             }
         }
@@ -138,17 +142,13 @@ namespace IPTV.ViewModels
         {
             get 
             { 
-                return linkInfoToEdit.Link; 
+                return link; 
             }
             set 
             {
-                if(linkInfoToEdit.Link != value)
-                {
-                    linkInfoToEdit.Link = value;
-                
+                if(SetProperty(ref link, value))
+                {  
                     IsCorrect();
-
-                    OnPropertyChanged();
                 }
             }
         }
@@ -161,7 +161,7 @@ namespace IPTV.ViewModels
                 {
                     LoadState(true);
 
-                    await SaveLink();
+                    await SaveEdit();
 
                     LoadState(false);
                 });
@@ -177,17 +177,24 @@ namespace IPTV.ViewModels
         {
             InitializeField("AddPlaylistMsg", "Add");
 
-            linkInfoToEdit = new LinksInfo();
+            title = string.Empty;
+
+            link = oldlink = string.Empty;
+
+            SaveBtnEnabled = false;
         }
 
-        public void ConfigureToEdit(LinksInfo link)
+        public void ConfigureToEdit(Playlist playlist)
         {
             InitializeField("EditPlaylistMsq", "Save");
 
-            linkInfoToEdit = link.Clone() as LinksInfo;
+            title = playlist.PlaylistTitle;
+
+            link  = oldlink = playlist.Link;
 
             IsCorrect();
         }
+
         private void LoadState(bool state)
         {
             IsEnabledToEdit = !state;
@@ -195,49 +202,62 @@ namespace IPTV.ViewModels
             Opacity = state ? 0.5 : 1;
         }
 
-        private async Task SaveLink()
+        private async Task SaveEdit()
         {
-            var chnangeList = new Action(() =>links.Add(linkInfoToEdit));
+            var newplaylist = await manager.CreatePlaylist(title, link);
 
-            if (linkInfoToEdit.ChannellList != null)
+            if (newplaylist.ChannelList != null && newplaylist.ChannelList.Count > 0)
             {
-                chnangeList = new Action(()=> links[IndexOfEditLink()] = linkInfoToEdit);
+                if(oldlink == String.Empty && IsUniqueLink(link))
+                {
+                    await AddPlaylist(newplaylist);
+                }
+                else if(oldlink != link && IsUniqueLink(link) || oldlink == link)
+                {
+                    await EditPlaylist(newplaylist);
+                }
+                else
+                {
+                    await messageDialog.ShowInfoMsg("NotUnique");
+                }
             }
-
-            if (IsUniqueLink(linkInfoToEdit.Link))
+            else
             {
-                linkInfoToEdit.ChannellList = await ChannelManager.GetChanelsAsync(Link);
+                await messageDialog.ShowInfoMsg("NoChannels");
             }
+        }
 
-            if (linkInfoToEdit.ChannellList != null && linkInfoToEdit.ChannellList.Count > 0)
-            {
-                chnangeList.Invoke();
+        private async Task AddPlaylist(Playlist playlist)
+        {
+            await manager.AddPlayList(playlistCollection, playlist);
 
-                await SaveToFile();
+            await GoodMessageClose();
+        }
 
-                return;
-            }
+        private async Task EditPlaylist(Playlist playlist)
+        {
+            await manager.EditPlaylist(playlistCollection, playlist, IndexOfEditPlaylist());
 
-            await messageDialog.ShowInfoMsg("Failed");
+            await GoodMessageClose();
+        }
+
+        private async Task GoodMessageClose()
+        {
+            await messageDialog.ShowInfoMsg("Successfully");
+
+            dialogService.CloseDialog();
         }
 
         private bool IsUniqueLink(string link)
         {
-            return !(from item in links where item.Link == link select item).Any();
+            return !(from item in playlistCollection where item.Link == link select item).Any();
         }
 
-        private int IndexOfEditLink()
+        private int IndexOfEditPlaylist()
         {
-            return links.IndexOf((from item in links where item.ChannellList == linkInfoToEdit.ChannellList select item).FirstOrDefault());
-        }
-
-        private async Task SaveToFile()
-        {
-            await DataManager.SaveLinksInfo(new LinksInfoList() { Links = this.links.ToList() });
-
-            await messageDialog.ShowInfoMsg("Successfully");
-
-            dialogService.CloseDialog();
+            return playlistCollection.IndexOf((from item in playlistCollection where 
+                                               item.Link == oldlink select item)
+                                               .FirstOrDefault());
         }
 
         private void IsCorrect()

@@ -153,6 +153,12 @@
   <data name="No" xml:space="preserve">
     <value>No</value>
   </data>
+  <data name="NoChnannels" xml:space="preserve">
+    <value>Channels not found</value>
+  </data>
+  <data name="NotUnique" xml:space="preserve">
+    <value>This link already exists</value>
+  </data>
   <data name="Options.Text" xml:space="preserve">
     <value>Options</value>
   </data>

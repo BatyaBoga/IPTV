@@ -1,7 +1,7 @@
 ﻿using Windows.UI.Xaml.Controls;
-using IPTV.Models;
-using IPTV.ViewModels;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using IPTV.Models.Model;
+using IPTV.ViewModels;
 
 namespace IPTV.Views
 {
@@ -21,9 +21,9 @@ namespace IPTV.Views
 
         public AddListViewModel ViewModel { get; set; }
 
-        public AddPlaylistDialog(LinksInfo LinksInfoToEditId) : this()
+        public AddPlaylistDialog(Playlist playlist) : this()
         {
-            ViewModel.ConfigureToEdit(LinksInfoToEditId);
+            ViewModel.ConfigureToEdit(playlist);
         }
 
     }

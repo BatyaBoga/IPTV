@@ -1,9 +1,10 @@
-﻿using IPTV.Constants;
-using System;
+﻿using System;
 using Windows.Storage;
 using Windows.UI.Xaml;
+using IPTV.Constants;
+using IPTV.Interfaces;
 
-namespace IPTV.Managers
+namespace IPTV.Services
 {
     public class ThemeManager : IThemeManager
     {
@@ -49,6 +50,5 @@ namespace IPTV.Managers
 
             ApplicationData.Current.LocalSettings.Values[Constant.ThemeSetting] = theme ? 0 : 1;
         }
-
     }
 }

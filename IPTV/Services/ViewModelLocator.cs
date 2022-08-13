@@ -1,8 +1,9 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using IPTV.Managers;
-using IPTV.ViewModels;
+﻿using System;
 using Microsoft.Extensions.DependencyInjection;
-using System;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using IPTV.ViewModels;
+using IPTV.Interfaces;
+using IPTV.Models;
 
 namespace IPTV.Services
 {
@@ -21,6 +22,8 @@ namespace IPTV.Services
               .AddSingleton<INavigationService, NavigationService>()
               .AddSingleton<IDialogService, DialogService>()
               .AddSingleton<IMessageDialog, MessageDialogManager>()
+              .AddSingleton<IIptvManager, IptvManager>()
+              .AddSingleton<IExplorer, Explorer>()
               .AddSingleton<OptionsViewModel>()
               .AddSingleton<MainViewModel>()
               .AddSingleton<AddListViewModel>()

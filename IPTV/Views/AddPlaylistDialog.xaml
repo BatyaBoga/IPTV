@@ -5,7 +5,7 @@
     xmlns:local="using:IPTV.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:manager="using:IPTV.Managers"
+    xmlns:manager="using:IPTV.Services"
     mc:Ignorable="d"
     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
     RequestedTheme="{x:Bind Path=manager:ThemeManager.CurrentThemeForApp, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"

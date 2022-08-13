@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
-using IPTV.Models;
+using System.Collections.Generic;
 using Windows.Media.Core;
-using IPTV.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using IPTV.Models.Model;
+using IPTV.Interfaces;
 
 namespace IPTV.ViewModels
 {
@@ -31,13 +31,13 @@ namespace IPTV.ViewModels
             searchText = String.Empty;
         }
         
-        public LinksInfo PlayList
+        public Playlist PlayList
         {
             set
             {
-                channels = value.ChannellList;
+                channels = value.ChannelList;
 
-                playListName = value.Title;
+                playListName = value.PlaylistTitle;
             }
         }
         
@@ -81,7 +81,7 @@ namespace IPTV.ViewModels
         {
             get 
             {
-                var uri = new Uri((selectedIndex >= 0) ? Channels[selectedIndex].TvStreamlink : null);
+                var uri = new Uri((selectedIndex >= 0) ? Channels[selectedIndex].Stream : null);
                   
                 var a = MediaSource.CreateFromUri(uri);
                 return a;
@@ -95,7 +95,7 @@ namespace IPTV.ViewModels
 
         private List<Channel> FilterChannels()
         {
-           return channels.Where(x => x.TvName.ToUpper().StartsWith(SearchText.ToUpper())).ToList();
+           return channels.Where(x => x.Title.ToUpper().StartsWith(SearchText.ToUpper())).ToList();
         }
     }
 }

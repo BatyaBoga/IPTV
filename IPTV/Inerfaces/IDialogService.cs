@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace IPTV.Services
+namespace IPTV.Interfaces
 {
     public interface IDialogService
     {

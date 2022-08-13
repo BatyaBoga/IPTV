@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Windows.UI.Popups;
 
-namespace IPTV.Managers
+namespace IPTV.Interfaces
 {
     public interface IMessageDialog
     {

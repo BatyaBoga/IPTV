@@ -1,19 +1,15 @@
 ﻿using System;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
-using Windows.Storage;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using IPTV.ViewModels;
-using IPTV.Views;
-using IPTV.Services;
-using IPTV.Constants;
-using IPTV.Managers;
-using Windows.Globalization;
-using Windows.UI.Core;
+using Windows.ApplicationModel;
+using Windows.ApplicationModel.Activation;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
+using IPTV.ViewModels;
+using IPTV.Interfaces;
+using IPTV.Services;
+using IPTV.Views;
 
 namespace IPTV
 {

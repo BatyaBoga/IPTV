@@ -1,12 +1,10 @@
-﻿using IPTV.Constants;
-using IPTV.Services;
-using IPTV.ViewModels;
+﻿using System.Linq;
 using System.Collections.Generic;
-using System.Linq;
 using Windows.Globalization;
-using Windows.Storage;
+using IPTV.ViewModels;
+using IPTV.Interfaces;
 
-namespace IPTV.Managers
+namespace IPTV.Services
 {
     public class LanguageManager : ILangugeManager
     {

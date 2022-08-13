@@ -2,11 +2,11 @@
 {
     public static class Constant
     {
-        public  const string DataFileName = "Links.json";
+        public  const string IptvDataFolderName = "IptvData";
 
         public const string RegexForChnaels = @"tvg-logo=""(([^""]+)?)"".+,(.+)\s(https?\S+)";
 
-        public const string RegexForTitle = @"^\w+$";
+        public const string RegexForTitle = @"^\w(\w+\s{0,3})+?$";
 
         public const string RegexForLink = @"https?:\/\/[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*).m3u$";
 

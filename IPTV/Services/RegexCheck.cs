@@ -1,8 +1,7 @@
-﻿using IPTV.Constants;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
+using IPTV.Constants;
 
-
-namespace IPTV.Managers
+namespace IPTV.Services
 {
     public static class RegexCheck
     {
@@ -15,6 +14,5 @@ namespace IPTV.Managers
         {
             return Regex.IsMatch(title, Constant.RegexForTitle);
         }
-
     }
 }

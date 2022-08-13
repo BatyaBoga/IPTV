@@ -1,7 +1,6 @@
-﻿using IPTV.Services;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace IPTV.Managers
+namespace IPTV.Interfaces
 {
     public interface ILangugeManager
     {

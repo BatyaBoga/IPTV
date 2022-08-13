@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:IPTV.Views"
-    xmlns:manager="using:IPTV.Managers"
+    xmlns:manager="using:IPTV.Services"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -53,9 +53,9 @@
                         <ListView.ItemTemplate>
                             <DataTemplate >
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,3" >
-                                    <TextBlock Name="ItemId" Text="{Binding TvName}" Margin="5,0,10,0" HorizontalAlignment="Left"  
+                                    <TextBlock Name="ItemId" Text="{Binding Title}" Margin="5,0,10,0" HorizontalAlignment="Left"  
                                                TextWrapping="WrapWholeWords" VerticalAlignment="Center" Width="240"/>
-                                    <Image Source="{Binding TvLogo}" HorizontalAlignment="Right"  VerticalAlignment="Center" Width="40" Height="40"></Image>
+                                    <Image Source="{Binding Logo}" HorizontalAlignment="Right"  VerticalAlignment="Center" Width="40" Height="40"></Image>
                                 </StackPanel>
                             </DataTemplate>
                         </ListView.ItemTemplate>

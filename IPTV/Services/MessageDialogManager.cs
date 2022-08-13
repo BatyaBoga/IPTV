@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.Resources;
 using Windows.UI.Popups;
+using Windows.ApplicationModel.Resources;
+using IPTV.Interfaces;
 
-namespace IPTV.Managers
+namespace IPTV.Services
 {
     public class MessageDialogManager : IMessageDialog
     {

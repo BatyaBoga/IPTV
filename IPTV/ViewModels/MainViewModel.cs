@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using System.Windows.Input;
-using IPTV.Models;
-using IPTV.Services;
-using IPTV.Managers;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using IPTV.Models.Model;
+using IPTV.Interfaces;
 
 namespace IPTV.ViewModels
 {
@@ -19,9 +18,13 @@ namespace IPTV.ViewModels
 
         private readonly IMessageDialog messageDialog;
 
-        public MainViewModel(INavigationService navigation, IDialogService dialog, IMessageDialog messageDialog)
+        private readonly IIptvManager manager;
+
+        public MainViewModel(INavigationService navigation, IDialogService dialog, IMessageDialog messageDialog, IIptvManager manager)
         {
-            Links = new ObservableCollection<LinksInfo>();
+            PlaylistCollection = new ObservableCollection<Playlist>();
+
+            this.manager = manager;
 
             InitializeLinks();
 
@@ -32,7 +35,7 @@ namespace IPTV.ViewModels
             this.messageDialog = messageDialog;
         }
 
-        public static ObservableCollection<LinksInfo> Links { get; set; }
+        public static ObservableCollection<Playlist> PlaylistCollection { get; set; }
 
         public int SelectedIndex
         {
@@ -48,9 +51,7 @@ namespace IPTV.ViewModels
             {
                 return new RelayCommand<string>(async (link) =>
                 {
-                    var linksInfoElement = GetLinksInfoElementBylink(link);
-
-                    linksInfoElement.ChannellList = await ChannelManager.GetChanelsAsync(link.ToString());
+                    await manager.UpdatePlaylist(GetPlaylistBylink(link));   
 
                     await messageDialog.ShowInfoMsg("UpdateMsg");
                 });
@@ -63,10 +64,11 @@ namespace IPTV.ViewModels
             {
                 return new RelayCommand<string>(async (link) =>
                 {
-                    await dialogServise.ShowDialog<AddListViewModel>(GetLinksInfoElementBylink(link));
+                    await dialogServise.ShowDialog<AddListViewModel>(GetPlaylistBylink(link));
                 });
             }
         }
+
 
         public ICommand DeleteLinks
         {
@@ -74,7 +76,10 @@ namespace IPTV.ViewModels
             {
                 return new RelayCommand<string>(async(link) =>
                 {  
-                    await messageDialog.ShureMsg("DeleteMsg", async(_) => await DeletePlaylist(link));
+                    await messageDialog.ShureMsg("DeleteMsg", async(_) =>
+                    {
+                       await manager.DeletePlaylist(PlaylistCollection, GetPlaylistBylink(link));
+                    });
                 });
             }
         }
@@ -91,35 +96,26 @@ namespace IPTV.ViewModels
 
         private void OpenPlaylist(int selectedindex)
         {  
-            navigation.Navigate<PlayListViewModel>(Links[selectedindex]);
+            navigation.Navigate<PlayListViewModel>(PlaylistCollection[selectedindex]);
         }
 
-        private async Task DeletePlaylist(object link)
+        private Playlist GetPlaylistBylink(object bindObject)
         {
-           Links.Remove(GetLinksInfoElementBylink(link));
-               
-           await DataManager.SaveLinksInfo(new LinksInfoList() { Links = Links.ToList() });
-        }
-
-        private LinksInfo GetLinksInfoElementBylink(object bindObject)
-        {
-            return (from item in Links where item.Link == bindObject.ToString() select item).FirstOrDefault();
+            return (from item in PlaylistCollection  where item.Link == bindObject.ToString() select item).FirstOrDefault();
         }
 
         private void InitializeLinks()
         {
             Task.Run(async () =>
             {
-                var linkslist = await DataManager.GetLinksInfo();
+               var list = new List<Playlist>();
 
-                if (linkslist.Links != null)
-                {
-                    foreach (var item in linkslist.Links)
-                    {
-                        item.ChannellList = await ChannelManager.GetChanelsAsync(item.Link);
-                        Links.Add(item);
-                    }
-                }
+               list = await manager.GetPlaylistCollection();
+                
+               foreach (var item in list)
+               {
+                  PlaylistCollection.Add(item);
+               }
             }).Wait();
         }
     }

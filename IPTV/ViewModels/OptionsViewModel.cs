@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using Windows.ApplicationModel.Resources;
-using IPTV.Constants;
-using IPTV.Managers;
 using CommunityToolkit.Mvvm.ComponentModel;
+using IPTV.Constants;
+using IPTV.Interfaces;
+using IPTV.Services;
 
 namespace IPTV.ViewModels
 {

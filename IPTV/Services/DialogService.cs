@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
+using IPTV.Interfaces;
 
 namespace IPTV.Services
 {
