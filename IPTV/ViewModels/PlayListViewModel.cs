@@ -84,6 +84,7 @@ namespace IPTV.ViewModels
                 var uri = new Uri((selectedIndex >= 0) ? Channels[selectedIndex].Stream : null);
                   
                 var a = MediaSource.CreateFromUri(uri);
+
                 return a;
             }
         }

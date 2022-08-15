@@ -24,20 +24,6 @@ namespace IPTV.Models
             Task.Run(async () => await ConfigExplorer()).Wait();
         }
 
-        public async Task DeletePlaylist(ObservableCollection<Playlist> playlistCollection, Playlist playlist)
-        {
-            await explorer.DeleteFile(playlist.FileName);
-
-            playlistCollection.Remove(playlist);
-        }
-
-        public async Task UpdatePlaylist(Playlist playlist)
-        {
-            playlist.ChannelList = await GetChannelsAsync(playlist.Link);
-
-            await explorer.SaveToFile(playlist.FileName, JsonConvert.SerializeObject(playlist));
-        }
-
         public async Task<Playlist> CreatePlaylist(string playlistTitle, string link)
         {
             var playlist = new Playlist()
@@ -54,13 +40,6 @@ namespace IPTV.Models
             return playlist;
         }
 
-        public async Task EditPlaylist(ObservableCollection<Playlist> playlistCollection, Playlist playlist, int indexOfPlaylist)
-        {
-            await explorer.SaveToFile(playlist.FileName, JsonConvert.SerializeObject(playlist));
-
-            playlistCollection[indexOfPlaylist] = playlist;
-        }
-
         public async Task AddPlayList(ObservableCollection<Playlist> playlistCollection, Playlist playlist)
         {
             string textToFile = JsonConvert.SerializeObject(playlist);
@@ -68,6 +47,27 @@ namespace IPTV.Models
             await explorer.SaveToNewFile(playlist.FileName, textToFile);
 
             playlistCollection.Add(playlist);
+        }
+
+        public async Task UpdatePlaylist(Playlist playlist)
+        {
+            playlist.ChannelList = await GetChannelsAsync(playlist.Link);
+
+            await explorer.SaveToFile(playlist.FileName, JsonConvert.SerializeObject(playlist));
+        }
+
+        public async Task EditPlaylist(ObservableCollection<Playlist> playlistCollection, Playlist playlist, int indexOfPlaylist)
+        {
+            await explorer.SaveToFile(playlist.FileName, JsonConvert.SerializeObject(playlist));
+
+            playlistCollection[indexOfPlaylist] = playlist;
+        }
+
+        public async Task DeletePlaylist(ObservableCollection<Playlist> playlistCollection, Playlist playlist)
+        {
+            playlistCollection.Remove(playlist);
+
+            await explorer.DeleteFile(playlist.FileName);
         }
 
         public async Task<List<Playlist>> GetPlaylistCollection()
@@ -123,6 +123,7 @@ namespace IPTV.Models
             foreach (var item in jobject["Links"])
             {
                 var playlist = await CreatePlaylist(item["Playlist"].ToString(), item["Link"].ToString());
+
                 await explorer.SaveToNewFile(playlist.FileName, JsonConvert.SerializeObject(playlist));
             }
         }

@@ -124,6 +124,7 @@
     <Compile Include="Inerfaces\ILangugeManager.cs" />
     <Compile Include="Inerfaces\IMessageDialog.cs" />
     <Compile Include="Inerfaces\IThemeManager.cs" />
+    <Compile Include="Models\Updater.cs" />
     <Compile Include="Services\LanguageManager.cs" />
     <Compile Include="Services\ThemeManager.cs" />
     <Compile Include="Models\Model\Channel.cs" />
@@ -230,7 +231,6 @@
   <ItemGroup>
     <PRIResource Include="Strings\ru-Ru\Resources.resw" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Content Include="Data\IptvData\Links.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

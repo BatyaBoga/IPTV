@@ -17,5 +17,7 @@
         public const string LightTheme = "Light";
 
         public const string DarkTheme = "Dark";
+
+        public const string TaskName = "UdateChannelTrigger";
     }
 }

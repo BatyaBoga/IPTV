@@ -5,16 +5,19 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.Background;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using IPTV.ViewModels;
 using IPTV.Interfaces;
 using IPTV.Services;
 using IPTV.Views;
+using IPTV.Models;
 
 namespace IPTV
 {
     sealed partial class App : Application
     {
+        private readonly Updater updater;
         public App()
         {
             InitializeComponent();
@@ -28,12 +31,16 @@ namespace IPTV
             DependencyTypeContainer.RegisterDependecy<PlayListView, PlayListViewModel>();
 
             DependencyTypeContainer.RegisterDependecy<OptionsView, OptionsViewModel>();
+
+            var locator = ViewModelLocator.Instance;
+
+            updater = new Updater(Ioc.Default.GetRequiredService<IIptvManager>());
         }
 
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
 
-            Frame rootFrame = Window.Current.Content as Frame;
+            var rootFrame = Window.Current.Content as Frame;
 
             if (rootFrame == null)
             {
@@ -73,7 +80,7 @@ namespace IPTV
 
         private void App_BackRequested(object sender, BackRequestedEventArgs e)
         {
-           Ioc.Default.GetRequiredService<INavigationService>().GoBack();
+            Ioc.Default.GetRequiredService<INavigationService>().GoBack();
 
             e.Handled = true;
         }
@@ -86,7 +93,17 @@ namespace IPTV
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
+
             deferral.Complete();
+        }
+
+        protected override void OnBackgroundActivated(BackgroundActivatedEventArgs args)
+        {
+            base.OnBackgroundActivated(args);
+
+            IBackgroundTaskInstance taskInstance = args.TaskInstance;
+
+            updater.Run(taskInstance);
         }
     }
 }

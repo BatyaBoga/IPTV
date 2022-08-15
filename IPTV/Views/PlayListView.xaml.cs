@@ -21,7 +21,9 @@ namespace IPTV.Views
             if(e.Parameter != null)
             {
                 PlayListViewModel viewmodel = ViewModelLocator.Instance.PlayList;
+
                 viewmodel.PlayList = e.Parameter as Playlist;
+
                 DataContext = viewmodel; 
             }
         }

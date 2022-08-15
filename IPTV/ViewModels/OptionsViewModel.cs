@@ -19,7 +19,6 @@ namespace IPTV.ViewModels
 
         public OptionsViewModel(ILangugeManager languageManager, IThemeManager themeManager)
         {
-
             this.languageManager = languageManager;  
 
             this.themeManager = themeManager;

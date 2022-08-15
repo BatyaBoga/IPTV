@@ -26,10 +26,7 @@ namespace IPTV.Services
 
         public bool IsLightTheme
         {
-            get
-            {
-               return CurrentThemeForApp == Constant.LightTheme ? true : false;
-            }
+            get => CurrentThemeForApp == Constant.LightTheme ? true : false;
         }
 
         public static void SetThemeFromStorgae()
