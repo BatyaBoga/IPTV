@@ -51,9 +51,10 @@ namespace IPTV.ViewModels
             {
                 return new RelayCommand<string>(async (link) =>
                 {
-                    await manager.UpdatePlaylist(GetPlaylistBylink(link));   
+                    string msg = await manager.UpdatePlaylist(GetPlaylistBylink(link)) ? "UpdateMsg" : "Failed";
 
-                    await messageDialog.ShowInfoMsg("UpdateMsg");
+                    await messageDialog.ShowInfoMsg(msg);
+
                 });
             }
         }

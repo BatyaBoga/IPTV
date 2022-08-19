@@ -17,9 +17,13 @@ namespace IPTV.Models
     {
         private IExplorer explorer;
 
-        public IptvManager(IExplorer explorer)
+        private IInternetChecker internetChecker;
+
+        public IptvManager(IExplorer explorer, IInternetChecker internetChecker)
         {
             this.explorer = explorer;
+
+            this.internetChecker = internetChecker;
 
             Task.Run(async () => await ConfigExplorer()).Wait();
         }
@@ -49,11 +53,20 @@ namespace IPTV.Models
             playlistCollection.Add(playlist);
         }
 
-        public async Task UpdatePlaylist(Playlist playlist)
+        public async Task<bool> UpdatePlaylist(Playlist playlist)
         {
-            playlist.ChannelList = await GetChannelsAsync(playlist.Link);
+            bool updated = false;
 
-            await explorer.SaveToFile(playlist.FileName, JsonConvert.SerializeObject(playlist));
+            if(internetChecker.IsConnected)
+            {
+                playlist.ChannelList = await GetChannelsAsync(playlist.Link);
+
+                await explorer.SaveToFile(playlist.FileName, JsonConvert.SerializeObject(playlist));
+
+                updated = true;
+            }
+
+            return updated;
         }
 
         public async Task EditPlaylist(ObservableCollection<Playlist> playlistCollection, Playlist playlist, int indexOfPlaylist)
@@ -87,6 +100,24 @@ namespace IPTV.Models
             return playlistCollection;
         }
 
+        public List<Channel> GetChannelFromStringAsync(string playlist)
+        {
+            var channelList = new List<Channel>();
+
+            foreach (Match m in Regex.Matches(playlist, Constant.RegexForChnaels))
+            {
+                channelList.Add(new Channel()
+                {
+                    Logo = m.Groups[2].Value ?? String.Empty,
+                    Title = m.Groups[3].Value ?? String.Empty,
+                    Stream = m.Groups[4].Value ?? String.Empty
+                });
+            }
+
+            return channelList;
+
+        }
+
         private async Task<List<Channel>> GetChannelsAsync(string link)
         {
             string request = String.Empty;
@@ -98,18 +129,8 @@ namespace IPTV.Models
                 request = await HttpManager.GetRequestAsync(link);
             }
             catch (HttpRequestException) { }
-
-            foreach (Match m in Regex.Matches(request, Constant.RegexForChnaels))
-            {
-                channelList.Add(new Channel()
-                {
-                    Logo = m.Groups[2].Value ?? String.Empty,
-                    Title = m.Groups[3].Value ?? String.Empty,
-                    Stream = m.Groups[4].Value ?? String.Empty
-                });
-            }
-
-            return channelList;
+            
+            return GetChannelFromStringAsync(request);
         }
 
         private async Task Preload()

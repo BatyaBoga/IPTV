@@ -9,6 +9,8 @@ namespace IPTV.Interfaces
     {
         Task<List<Playlist>> GetPlaylistCollection();
 
+        List<Channel> GetChannelFromStringAsync(string playlist);
+
         Task<Playlist> CreatePlaylist(string playlistTitle, string link);
 
         Task AddPlayList(ObservableCollection<Playlist> playlistCollection, Playlist playlist);
@@ -17,6 +19,6 @@ namespace IPTV.Interfaces
 
         Task EditPlaylist(ObservableCollection<Playlist> playlistCollection, Playlist playlist, int indexOfPlaylist);
 
-        Task UpdatePlaylist(Playlist playlist);
+        Task<bool> UpdatePlaylist(Playlist playlist);
     }
 }

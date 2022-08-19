@@ -121,10 +121,12 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Constants\Constant.cs" />
+    <Compile Include="Inerfaces\IInternetChecker.cs" />
     <Compile Include="Inerfaces\ILangugeManager.cs" />
     <Compile Include="Inerfaces\IMessageDialog.cs" />
     <Compile Include="Inerfaces\IThemeManager.cs" />
     <Compile Include="Models\Updater.cs" />
+    <Compile Include="Services\InternetChecker.cs" />
     <Compile Include="Services\LanguageManager.cs" />
     <Compile Include="Services\ThemeManager.cs" />
     <Compile Include="Models\Model\Channel.cs" />
@@ -146,6 +148,7 @@
     <Compile Include="ViewModels\OptionsViewModel.cs" />
     <Compile Include="ViewModels\PlayListViewModel.cs" />
     <Compile Include="Services\ViewModelLocator.cs" />
+    <Compile Include="ViewModels\StreamViewModel.cs" />
     <Compile Include="Views\AddPlaylistDialog.xaml.cs">
       <DependentUpon>AddPlaylistDialog.xaml</DependentUpon>
     </Compile>
@@ -159,6 +162,9 @@
     <Compile Include="Views\PlayListView.xaml.cs">
       <DependentUpon>PlayListView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\StreamView.xaml.cs">
+      <DependentUpon>StreamView.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -169,8 +175,10 @@
     <Content Include="Assets\AddBtn.png" />
     <Content Include="Assets\BackBtn.png" />
     <Content Include="Assets\bin.png" />
+    <Content Include="Assets\miniLogo44x44.png" />
     <Content Include="Assets\pen.png" />
     <Content Include="Assets\search.png" />
+    <Content Include="Assets\Square44x44Logo.scale-100.png" />
     <Content Include="Assets\update.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
@@ -200,6 +208,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PlayListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\StreamView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

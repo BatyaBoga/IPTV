@@ -65,7 +65,15 @@
         </Grid>
 
         <Grid Grid.Column="1">
-            <MediaPlayerElement x:Name="Player" Source="{Binding SelectedChannel}" AutoPlay="True"  AreTransportControlsEnabled="True"/>
+            <MediaPlayerElement x:Name="Player" Source="{Binding SelectedChannel}" AutoPlay="True" AreTransportControlsEnabled="True">
+                <MediaPlayerElement.TransportControls>
+                    <MediaTransportControls   IsCompact="True"
+                                              IsCompactOverlayButtonVisible="True"
+                                              IsCompactOverlayEnabled="True"
+                                              IsSeekBarVisible="False"
+                                              IsZoomButtonVisible="False"/>
+                </MediaPlayerElement.TransportControls>
+            </MediaPlayerElement>
         </Grid>
         
     </Grid>

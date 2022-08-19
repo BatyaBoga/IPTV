@@ -4,7 +4,8 @@
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
-  IgnorableNamespaces="uap mp">
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+  IgnorableNamespaces="uap mp uap3">
 
   <Identity
     Name="abb36819-8a63-4cc0-9dd5-ce3174128c3a"
@@ -42,10 +43,24 @@
         <uap:InitialRotationPreference>
           <uap:Rotation Preference="landscape"/></uap:InitialRotationPreference>
       </uap:VisualElements>
+      <Extensions>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="iptv">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="video/m3u8">.m3u8</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>IPTV</uap:DisplayName>
+            <uap:InfoTip>IPTV File</uap:InfoTip>
+            <uap:EditFlags OpenIsSafe="true"/>
+            <uap:Logo>Assets\miniLogo44x44.png</uap:Logo>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+      </Extensions>
     </Application>
   </Applications>
 
   <Capabilities>
     <Capability Name="internetClient" />
+    <uap3:Capability Name="backgroundMediaPlayback"/>
   </Capabilities>
 </Package>

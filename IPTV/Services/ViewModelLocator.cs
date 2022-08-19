@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using IPTV.ViewModels;
 using IPTV.Interfaces;
 using IPTV.Models;
+using Windows.ApplicationModel.Resources;
 
 namespace IPTV.Services
 {
@@ -21,6 +22,7 @@ namespace IPTV.Services
               .AddSingleton<IThemeManager, ThemeManager>()
               .AddSingleton<INavigationService, NavigationService>()
               .AddSingleton<IDialogService, DialogService>()
+              .AddSingleton<IInternetChecker, InternetChecker>()
               .AddSingleton<IMessageDialog, MessageDialogManager>()
               .AddSingleton<IIptvManager, IptvManager>()
               .AddSingleton<IExplorer, Explorer>()
@@ -28,12 +30,15 @@ namespace IPTV.Services
               .AddSingleton<MainViewModel>()
               .AddSingleton<AddListViewModel>()
               .AddSingleton<PlayListViewModel>()
+              .AddSingleton<StreamViewModel>()
               .BuildServiceProvider());
         }
 
         public OptionsViewModel Options => Ioc.Default.GetRequiredService<OptionsViewModel>();
 
         public PlayListViewModel PlayList => Ioc.Default.GetRequiredService<PlayListViewModel>();
+
+        public StreamViewModel Stream => Ioc.Default.GetRequiredService<StreamViewModel>();
 
         public MainViewModel Main => Ioc.Default.GetRequiredService<MainViewModel>();
 

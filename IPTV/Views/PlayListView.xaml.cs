@@ -4,8 +4,8 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Windows.ApplicationModel.Core;
 using IPTV.Models.Model;
-using IPTV.ViewModels;
 using IPTV.Services;
+using Windows.UI.ViewManagement;
 
 namespace IPTV.Views
 {
@@ -16,15 +16,15 @@ namespace IPTV.Views
             InitializeComponent();
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             if(e.Parameter != null)
             {
-                PlayListViewModel viewmodel = ViewModelLocator.Instance.PlayList;
+                var viewmodel = ViewModelLocator.Instance.PlayList;
 
                 viewmodel.PlayList = e.Parameter as Playlist;
 
-                DataContext = viewmodel; 
+                DataContext = viewmodel;
             }
         }
 

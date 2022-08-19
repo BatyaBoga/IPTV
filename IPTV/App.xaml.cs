@@ -12,6 +12,9 @@ using IPTV.Interfaces;
 using IPTV.Services;
 using IPTV.Views;
 using IPTV.Models;
+using IPTV.Models.Model;
+using Windows.Storage;
+using Windows.Networking.Connectivity;
 
 namespace IPTV
 {
@@ -30,11 +33,15 @@ namespace IPTV
 
             DependencyTypeContainer.RegisterDependecy<PlayListView, PlayListViewModel>();
 
+            DependencyTypeContainer.RegisterDependecy<StreamView, StreamViewModel>();
+
             DependencyTypeContainer.RegisterDependecy<OptionsView, OptionsViewModel>();
 
             var locator = ViewModelLocator.Instance;
 
             updater = new Updater(Ioc.Default.GetRequiredService<IIptvManager>());
+
+            NetworkInformation.NetworkStatusChanged += Ioc.Default.GetRequiredService<IInternetChecker>().OnNetworkStatusChange;
         }
 
         protected override void OnLaunched(LaunchActivatedEventArgs e)
@@ -104,6 +111,11 @@ namespace IPTV
             IBackgroundTaskInstance taskInstance = args.TaskInstance;
 
             updater.Run(taskInstance);
+        }
+
+        protected override void OnFileActivated(FileActivatedEventArgs args)
+        {
+            Ioc.Default.GetRequiredService<INavigationService>().Navigate<StreamViewModel>(args.Files[0] as StorageFile);
         }
     }
 }

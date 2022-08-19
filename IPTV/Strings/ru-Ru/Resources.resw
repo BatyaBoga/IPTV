@@ -141,6 +141,12 @@
   <data name="Failed" xml:space="preserve">
     <value>Ошибка</value>
   </data>
+  <data name="InternetEstablished" xml:space="preserve">
+    <value>Интернет соединение востановлено</value>
+  </data>
+  <data name="InternetLost" xml:space="preserve">
+    <value>Интернет соединение утеряно</value>
+  </data>
   <data name="Language.Text" xml:space="preserve">
     <value>Язык</value>
   </data>

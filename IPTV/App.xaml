@@ -20,8 +20,6 @@
             <Setter Property="Control.Width" Value="30" />
             <Setter Property="Control.Height" Value="30" />
         </Style>
-
-
     </Application.Resources>
 </Application>
 
