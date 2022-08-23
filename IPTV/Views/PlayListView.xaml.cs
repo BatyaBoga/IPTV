@@ -6,6 +6,11 @@ using Windows.ApplicationModel.Core;
 using IPTV.Models.Model;
 using IPTV.Services;
 using Windows.UI.ViewManagement;
+using Windows.UI.Core.Preview;
+using IPTV.ViewModels;
+using Newtonsoft.Json;
+using IPTV.Interfaces;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace IPTV.Views
 {
@@ -16,24 +21,27 @@ namespace IPTV.Views
             InitializeComponent();
         }
 
-        protected async override void OnNavigatedTo(NavigationEventArgs e)
+        private static PlayListViewModel ViewModel { get => ViewModelLocator.Instance.PlayList;}
+
+        private static ISaveStateService SaveServise { get => Ioc.Default.GetRequiredService<ISaveStateService>(); }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if(e.Parameter != null)
             {
-                var viewmodel = ViewModelLocator.Instance.PlayList;
-
-                viewmodel.PlayList = e.Parameter as Playlist;
-
-                DataContext = viewmodel;
+                ViewModel.PlayList = e.Parameter as Playlist;
             }
+
+            SaveServise.ActiveSave(ViewModel);
+
+            DataContext = ViewModel;
         }
 
-        protected async override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                Player.MediaPlayer.Pause();
-            });
+           SaveServise.DeactiveSave();
+
+           DataContext = null;
         }
     }
 }

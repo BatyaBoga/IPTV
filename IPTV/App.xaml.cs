@@ -15,6 +15,7 @@ using IPTV.Models;
 using IPTV.Models.Model;
 using Windows.Storage;
 using Windows.Networking.Connectivity;
+using IPTV.Constants;
 
 namespace IPTV
 {
@@ -39,6 +40,8 @@ namespace IPTV
 
             var locator = ViewModelLocator.Instance;
 
+            Ioc.Default.GetRequiredService<ISaveStateService>().LoadSaveState();
+
             updater = new Updater(Ioc.Default.GetRequiredService<IIptvManager>());
 
             NetworkInformation.NetworkStatusChanged += Ioc.Default.GetRequiredService<IInternetChecker>().OnNetworkStatusChange;
@@ -46,43 +49,18 @@ namespace IPTV
 
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
-
-            var rootFrame = Window.Current.Content as Frame;
-
-            if (rootFrame == null)
-            {
-                rootFrame = new Frame();
-
-                rootFrame.NavigationFailed += OnNavigationFailed;
-
-                Window.Current.Content = rootFrame;
-            }
+            var rootFrame = GetRootFrame();
 
             if (e.PrelaunchActivated == false)
             {
-                if (rootFrame.Content == null)
-                {
-                    rootFrame.Navigate(typeof(MainPage), e.Arguments);
-                }
-
-                Window.Current.Activate();
+               NavigateToRoot(rootFrame);
             }
 
-            SystemNavigationManager.GetForCurrentView().BackRequested += App_BackRequested;
+            ActiveBackBtn(rootFrame);
 
-            rootFrame.Navigated += (s, args) =>
-            {
-                if (rootFrame.CanGoBack)
-                {
-                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                                            AppViewBackButtonVisibility.Visible;
-                }
-                else
-                {
-                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                        AppViewBackButtonVisibility.Collapsed;
-                }
-            };
+            Ioc.Default.GetRequiredService<ISaveStateService>().GoToSaveState();
+
+            Window.Current.Activate();
         }
 
         private void App_BackRequested(object sender, BackRequestedEventArgs e)
@@ -115,7 +93,61 @@ namespace IPTV
 
         protected override void OnFileActivated(FileActivatedEventArgs args)
         {
-            Ioc.Default.GetRequiredService<INavigationService>().Navigate<StreamViewModel>(args.Files[0] as StorageFile);
+            var rootFrame = GetRootFrame();
+
+            NavigateToRoot(rootFrame);
+
+            ActiveBackBtn(rootFrame);
+
+            Ioc.Default.GetRequiredService<INavigationService>()
+                .Navigate<StreamViewModel>(args.Files[0] as StorageFile);
+
+            Window.Current.Activate();
         }
+
+        private Frame GetRootFrame()
+        {
+            var rootFrame = Window.Current.Content as Frame;
+
+            if (rootFrame == null)
+            {
+                rootFrame = new Frame();
+
+                rootFrame.NavigationFailed += OnNavigationFailed;
+
+                Window.Current.Content = rootFrame;
+            }
+
+            return rootFrame;
+        }
+
+        private void NavigateToRoot(Frame rootFrame)
+        {
+            if (rootFrame.Content == null)
+            {
+                rootFrame.Navigate(typeof(MainPage));
+            }
+
+            SystemNavigationManager.GetForCurrentView().BackRequested += App_BackRequested;
+        }
+
+        private void ActiveBackBtn(Frame rootFrame)
+        {
+
+            rootFrame.Navigated += (s, args) =>
+            {
+                if (rootFrame.CanGoBack)
+                {
+                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                                            AppViewBackButtonVisibility.Visible;
+                }
+                else
+                {
+                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                        AppViewBackButtonVisibility.Collapsed;
+                }
+            };
+        }
+
     }
 }

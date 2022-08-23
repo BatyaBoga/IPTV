@@ -1,56 +1,54 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using IPTV.Services;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel.Core;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Media.Core;
 using Windows.Storage;
 using Windows.UI.Core;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
+using IPTV.ViewModels;
+using IPTV.Interfaces;
+using Windows.Media.Playback;
 
 namespace IPTV.Views
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class StreamView : Page
     {
         public StreamView()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
+
+        private static StreamViewModel ViewModel { get => ViewModelLocator.Instance.Stream;}
+
+        private static ISaveStateService SaveServise { get => Ioc.Default.GetRequiredService<ISaveStateService>(); }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+
             if (e.Parameter != null)
             {
-                var streamViewModel = ViewModelLocator.Instance.Stream;
+                if(e.Parameter is StorageFile)
+                {
+                    ViewModel.SetSource(e.Parameter as StorageFile);
+                }
+                else
+                {
+                    ViewModel.SetSource(e.Parameter.ToString());
 
-                streamViewModel.SetSource(e.Parameter as StorageFile);
-
-                DataContext = streamViewModel;
+                    SaveServise.ActiveSave(ViewModel);
+                } 
             }
+
+            DataContext = ViewModel;
         }
 
-        protected async override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                Player.MediaPlayer.Pause();
-            });
+            SaveServise.DeactiveSave();
+
+            DataContext = null;
         }
+
     }
 }

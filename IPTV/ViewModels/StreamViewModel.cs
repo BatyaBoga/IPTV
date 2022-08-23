@@ -1,22 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Media.Core;
-using Windows.Media.Playback;
 using Windows.Media.Streaming.Adaptive;
-using Windows.Networking.BackgroundTransfer;
 using Windows.Storage;
 
 namespace IPTV.ViewModels
 {
     public class StreamViewModel : ObservableObject
     {
+        private MediaSource stream;
 
-        private Uri stream;
-        public Uri Stream
+        public MediaSource Stream
         {
             get
             {
@@ -30,12 +24,17 @@ namespace IPTV.ViewModels
 
         public async void SetSource(StorageFile file)
         {
+           var adaptiveSource = await AdaptiveMediaSource
+                .CreateFromStreamAsync(await file.OpenReadAsync(), new Uri(file.Path), file.ContentType);
 
-            var a = MediaSource.CreateFromStorageFile(file);
-
-            Stream = new Uri(file.Path);
+           Stream = MediaSource.CreateFromAdaptiveMediaSource(adaptiveSource.MediaSource);
         }
 
+        public void SetSource(string link)
+        {
+            var a = MediaSource.CreateFromUri(new Uri(link));
 
+            Stream = a;
+        }
     }
 }

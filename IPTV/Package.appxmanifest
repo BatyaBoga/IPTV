@@ -5,7 +5,9 @@
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
-  IgnorableNamespaces="uap mp uap3">
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  
+  IgnorableNamespaces="uap mp uap3 rescap">
 
   <Identity
     Name="abb36819-8a63-4cc0-9dd5-ce3174128c3a"
@@ -61,6 +63,8 @@
 
   <Capabilities>
     <Capability Name="internetClient" />
+    <rescap:Capability Name="confirmAppClose" />
     <uap3:Capability Name="backgroundMediaPlayback"/>
   </Capabilities>
+
 </Package>

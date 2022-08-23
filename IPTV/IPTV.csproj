@@ -121,26 +121,29 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Constants\Constant.cs" />
-    <Compile Include="Inerfaces\IInternetChecker.cs" />
-    <Compile Include="Inerfaces\ILangugeManager.cs" />
-    <Compile Include="Inerfaces\IMessageDialog.cs" />
-    <Compile Include="Inerfaces\IThemeManager.cs" />
+    <Compile Include="Interfaces\IInternetChecker.cs" />
+    <Compile Include="Interfaces\ILangugeManager.cs" />
+    <Compile Include="Interfaces\IMessageDialog.cs" />
+    <Compile Include="Interfaces\ISaveStateService.cs" />
+    <Compile Include="Interfaces\IThemeManager.cs" />
+    <Compile Include="Models\Model\OpenPlaylist.cs" />
     <Compile Include="Models\Updater.cs" />
     <Compile Include="Services\InternetChecker.cs" />
     <Compile Include="Services\LanguageManager.cs" />
+    <Compile Include="Services\SaveStateService.cs" />
     <Compile Include="Services\ThemeManager.cs" />
     <Compile Include="Models\Model\Channel.cs" />
     <Compile Include="Models\Explorer.cs" />
     <Compile Include="Models\HttpManager.cs" />
-    <Compile Include="Inerfaces\IExplorer.cs" />
-    <Compile Include="Inerfaces\IIptvManager.cs" />
+    <Compile Include="Interfaces\IExplorer.cs" />
+    <Compile Include="Interfaces\IIptvManager.cs" />
     <Compile Include="Models\IptvManager.cs" />
     <Compile Include="Models\Model\Playlist.cs" />
     <Compile Include="Services\DependencyTypeContainer.cs" />
     <Compile Include="Services\DialogService.cs" />
     <Compile Include="Services\MessageDialogManager.cs" />
-    <Compile Include="Inerfaces\IDialogService.cs" />
-    <Compile Include="Inerfaces\INavigationService.cs" />
+    <Compile Include="Interfaces\IDialogService.cs" />
+    <Compile Include="Interfaces\INavigationService.cs" />
     <Compile Include="Services\NavigationService.cs" />
     <Compile Include="ViewModels\AddListViewModel.cs" />
     <Compile Include="Services\RegexCheck.cs" />

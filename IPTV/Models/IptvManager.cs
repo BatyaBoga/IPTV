@@ -30,6 +30,22 @@ namespace IPTV.Models
 
         public async Task<Playlist> CreatePlaylist(string playlistTitle, string link)
         {
+            var channelList = new List<Channel>();
+
+            if (link.EndsWith("8"))
+            {
+                channelList.Add(new Channel()
+                {
+                    Title = playlistTitle,
+                    Logo = String.Empty,
+                    Stream = link
+                });
+            }
+            else
+            {
+                channelList = await GetChannelsAsync(link);
+            }
+
             var playlist = new Playlist()
             {
                 PlaylistTitle = playlistTitle,
@@ -38,7 +54,7 @@ namespace IPTV.Models
 
                 FileName = Guid.NewGuid().ToString() + ".json",
 
-                ChannelList = await GetChannelsAsync(link)
+                ChannelList = channelList
             };
 
             return playlist;
@@ -59,7 +75,8 @@ namespace IPTV.Models
 
             if(internetChecker.IsConnected)
             {
-                playlist.ChannelList = await GetChannelsAsync(playlist.Link);
+                playlist.ChannelList = playlist.Link.EndsWith("8") ? playlist.ChannelList :
+                    await GetChannelsAsync(playlist.Link);
 
                 await explorer.SaveToFile(playlist.FileName, JsonConvert.SerializeObject(playlist));
 
@@ -100,7 +117,14 @@ namespace IPTV.Models
             return playlistCollection;
         }
 
-        public List<Channel> GetChannelFromStringAsync(string playlist)
+        public async Task<Playlist> GetPlaylistByFileName(string fileName)
+        {
+            string playlistText = await explorer.LoadFromFile(fileName);
+
+            return JsonConvert.DeserializeObject<Playlist>(playlistText);
+        }
+
+        private List<Channel> GetChannelFromStringAsync(string playlist)
         {
             var channelList = new List<Channel>();
 

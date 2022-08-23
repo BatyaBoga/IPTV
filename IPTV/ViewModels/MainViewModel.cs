@@ -96,8 +96,17 @@ namespace IPTV.ViewModels
         }
 
         private void OpenPlaylist(int selectedindex)
-        {  
-            navigation.Navigate<PlayListViewModel>(PlaylistCollection[selectedindex]);
+        {
+            var playlist = PlaylistCollection[selectedindex];
+
+            if (playlist.ChannelList.Count > 1)
+            {
+                navigation.Navigate<PlayListViewModel>(playlist);
+            }
+            else
+            {
+                navigation.Navigate<StreamViewModel>(playlist.Link);
+            }
         }
 
         private Playlist GetPlaylistBylink(object bindObject)

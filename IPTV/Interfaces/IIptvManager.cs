@@ -9,7 +9,7 @@ namespace IPTV.Interfaces
     {
         Task<List<Playlist>> GetPlaylistCollection();
 
-        List<Channel> GetChannelFromStringAsync(string playlist);
+        Task<Playlist> GetPlaylistByFileName(string fileName);
 
         Task<Playlist> CreatePlaylist(string playlistTitle, string link);
 

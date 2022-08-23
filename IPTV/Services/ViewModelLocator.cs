@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using IPTV.ViewModels;
 using IPTV.Interfaces;
 using IPTV.Models;
-using Windows.ApplicationModel.Resources;
 
 namespace IPTV.Services
 {
@@ -26,6 +25,7 @@ namespace IPTV.Services
               .AddSingleton<IMessageDialog, MessageDialogManager>()
               .AddSingleton<IIptvManager, IptvManager>()
               .AddSingleton<IExplorer, Explorer>()
+              .AddSingleton<ISaveStateService, SaveStateService>()
               .AddSingleton<OptionsViewModel>()
               .AddSingleton<MainViewModel>()
               .AddSingleton<AddListViewModel>()
