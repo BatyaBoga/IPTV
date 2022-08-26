@@ -1,16 +1,11 @@
-﻿using System;
-using Windows.UI.Core;
-using Windows.UI.Xaml.Controls;
+﻿using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Windows.ApplicationModel.Core;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using IPTV.Models.Model;
 using IPTV.Services;
-using Windows.UI.ViewManagement;
-using Windows.UI.Core.Preview;
 using IPTV.ViewModels;
-using Newtonsoft.Json;
 using IPTV.Interfaces;
-using CommunityToolkit.Mvvm.DependencyInjection;
+using IPTV.Constants;
 
 namespace IPTV.Views
 {
@@ -21,18 +16,20 @@ namespace IPTV.Views
             InitializeComponent();
         }
 
-        private static PlayListViewModel ViewModel { get => ViewModelLocator.Instance.PlayList;}
+        private static PlayListViewModel ViewModel => ViewModelLocator.Instance.PlayList;
 
-        private static ISaveStateService SaveServise { get => Ioc.Default.GetRequiredService<ISaveStateService>(); }
+        private static ISaveStateService SaveServise => Ioc.Default.GetRequiredService<ISaveStateService>(); 
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if(e.Parameter != null)
+            App.IsBackButtonEnabled(true);
+
+            if (e.Parameter != null)
             {
                 ViewModel.PlayList = e.Parameter as Playlist;
             }
 
-            SaveServise.ActiveSave(ViewModel);
+            SaveServise.ActiveSave(Constant.Remote, ViewModel);
 
             DataContext = ViewModel;
         }
@@ -42,6 +39,8 @@ namespace IPTV.Views
            SaveServise.DeactiveSave();
 
            DataContext = null;
+
+           App.IsBackButtonEnabled(false);
         }
     }
 }

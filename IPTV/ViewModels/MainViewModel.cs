@@ -1,12 +1,7 @@
-﻿using System.Linq;
-using System.Windows.Input;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using Windows.UI.Xaml.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using IPTV.Models.Model;
 using IPTV.Interfaces;
+using IPTV.Constants;
 
 namespace IPTV.ViewModels
 {
@@ -14,119 +9,40 @@ namespace IPTV.ViewModels
     {
         private readonly INavigationService navigation;
 
-        private readonly IDialogService dialogServise;
+        private object selectedItem;
 
-        private readonly IMessageDialog messageDialog;
-
-        private readonly IIptvManager manager;
-
-        public MainViewModel(INavigationService navigation, IDialogService dialog, IMessageDialog messageDialog, IIptvManager manager)
+        public MainViewModel(INavigationService navigation)
         {
-            PlaylistCollection = new ObservableCollection<Playlist>();
-
-            this.manager = manager;
-
-            InitializeLinks();
-
             this.navigation = navigation;
-
-            this.dialogServise = dialog;
-
-            this.messageDialog = messageDialog;
         }
 
-        public static ObservableCollection<Playlist> PlaylistCollection { get; set; }
-
-        public int SelectedIndex
+        public object SelectedItem
         {
-            set
-            {
-                OpenPlaylist(value);  
+            get 
+            { 
+                return selectedItem; 
             }
-        }
-
-        public ICommand UpdateLinks
-        {
-            get
-            {
-                return new RelayCommand<string>(async (link) =>
+            set 
+            { 
+                if(value != null && SetProperty(ref selectedItem, value))
                 {
-                    string msg = await manager.UpdatePlaylist(GetPlaylistBylink(link)) ? "UpdateMsg" : "Failed";
-
-                    await messageDialog.ShowInfoMsg(msg);
-
-                });
+                    GoToSelectedItem();
+                } 
             }
         }
 
-        public ICommand EditLink
+        public void GoToSelectedItem()
         {
-            get
+            string tag = (selectedItem as NavigationViewItem).Tag as string;
+
+            switch (tag)
             {
-                return new RelayCommand<string>(async (link) =>
-                {
-                    await dialogServise.ShowDialog<AddListViewModel>(GetPlaylistBylink(link));
-                });
+                case Constant.Remote: navigation.NavigateToFrame<RemoteListViewModel>(); break;
+
+                case Constant.Local: navigation.NavigateToFrame<LocalListViewModel>(); break;
+
+                default: navigation.NavigateToFrame<OptionsViewModel>(); break;
             }
-        }
-
-
-        public ICommand DeleteLinks
-        {
-            get
-            {
-                return new RelayCommand<string>(async(link) =>
-                {  
-                    await messageDialog.ShureMsg("DeleteMsg", async(_) =>
-                    {
-                       await manager.DeletePlaylist(PlaylistCollection, GetPlaylistBylink(link));
-                    });
-                });
-            }
-        }
-
-        public ICommand AddLinks
-        {
-            get => new RelayCommand(async() => await dialogServise.ShowDialog<AddListViewModel>());
-        }
-
-        public ICommand OpenOptions
-        {
-            get => new RelayCommand(() => navigation.Navigate<OptionsViewModel>());   
-        }
-
-        private void OpenPlaylist(int selectedindex)
-        {
-            var playlist = PlaylistCollection[selectedindex];
-
-            if (playlist.ChannelList.Count > 1)
-            {
-                navigation.Navigate<PlayListViewModel>(playlist);
-            }
-            else
-            {
-                navigation.Navigate<StreamViewModel>(playlist.Link);
-            }
-        }
-
-        private Playlist GetPlaylistBylink(object bindObject)
-        {
-            return (from item in PlaylistCollection  where item.Link == bindObject.ToString() select item).FirstOrDefault();
-        }
-
-        private void InitializeLinks()
-        {
-            Task.Run(async () =>
-            {
-               var list = new List<Playlist>();
-
-               list = await manager.GetPlaylistCollection();
-                
-               foreach (var item in list)
-               {
-                  PlaylistCollection.Add(item);
-               }
-            }).Wait();
         }
     }
 }

@@ -8,6 +8,8 @@ namespace IPTV.Interfaces
 
         void Navigate<TViewModel>();
 
+        void NavigateToFrame<TViewModel>();
+
         void GoBack();
 
         Task Refresh<TVIewModel>();

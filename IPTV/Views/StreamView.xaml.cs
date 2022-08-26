@@ -1,14 +1,11 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using IPTV.Services;
-using System;
-using Windows.ApplicationModel.Core;
-using Windows.Storage;
-using Windows.UI.Core;
+﻿using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using IPTV.Services;
 using IPTV.ViewModels;
 using IPTV.Interfaces;
-using Windows.Media.Playback;
+using IPTV.Constants;
 
 namespace IPTV.Views
 {
@@ -19,24 +16,27 @@ namespace IPTV.Views
             InitializeComponent();
         }
 
-        private static StreamViewModel ViewModel { get => ViewModelLocator.Instance.Stream;}
+        private static StreamViewModel ViewModel => ViewModelLocator.Instance.Stream;
 
-        private static ISaveStateService SaveServise { get => Ioc.Default.GetRequiredService<ISaveStateService>(); }
+        private static ISaveStateService SaveServise => Ioc.Default.GetRequiredService<ISaveStateService>();
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            App.IsBackButtonEnabled(true);
 
             if (e.Parameter != null)
             {
                 if(e.Parameter is StorageFile)
                 {
                     ViewModel.SetSource(e.Parameter as StorageFile);
+
+                    SaveServise.ActiveSave(Constant.Local, ViewModel);
                 }
                 else
                 {
                     ViewModel.SetSource(e.Parameter.ToString());
 
-                    SaveServise.ActiveSave(ViewModel);
+                    SaveServise.ActiveSave(Constant.Remote, ViewModel);
                 } 
             }
 
@@ -48,7 +48,8 @@ namespace IPTV.Views
             SaveServise.DeactiveSave();
 
             DataContext = null;
-        }
 
+            App.IsBackButtonEnabled(false);
+        }
     }
 }

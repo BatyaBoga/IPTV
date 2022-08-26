@@ -10,37 +10,29 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using IPTV.ViewModels;
 using IPTV.Interfaces;
 using IPTV.Services;
-using IPTV.Views;
 using IPTV.Models;
-using IPTV.Models.Model;
 using Windows.Storage;
 using Windows.Networking.Connectivity;
-using IPTV.Constants;
 
 namespace IPTV
 {
     sealed partial class App : Application
     {
         private readonly Updater updater;
+
+        private ISaveStateService SaveStateService => Ioc.Default.GetRequiredService<ISaveStateService>();
+
         public App()
         {
             InitializeComponent();
 
             Suspending += OnSuspending;
 
-            ThemeManager.SetThemeFromStorgae();
-
-            DependencyTypeContainer.RegisterDependecy<AddPlaylistDialog, AddListViewModel>();
-
-            DependencyTypeContainer.RegisterDependecy<PlayListView, PlayListViewModel>();
-
-            DependencyTypeContainer.RegisterDependecy<StreamView, StreamViewModel>();
-
-            DependencyTypeContainer.RegisterDependecy<OptionsView, OptionsViewModel>();
-
             var locator = ViewModelLocator.Instance;
 
-            Ioc.Default.GetRequiredService<ISaveStateService>().LoadSaveState();
+            ThemeManager.SetThemeFromStorgae();
+
+            SaveStateService.LoadSavedMedia();
 
             updater = new Updater(Ioc.Default.GetRequiredService<IIptvManager>());
 
@@ -56,11 +48,23 @@ namespace IPTV
                NavigateToRoot(rootFrame);
             }
 
-            ActiveBackBtn(rootFrame);
-
-            Ioc.Default.GetRequiredService<ISaveStateService>().GoToSaveState();
+            SaveStateService.GoToLoadedMedia();
 
             Window.Current.Activate();
+        }
+
+        public static void IsBackButtonEnabled(bool isEnabled)
+        {
+            if (isEnabled)
+            {
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                                        AppViewBackButtonVisibility.Visible;
+            }
+            else
+            {
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                                        AppViewBackButtonVisibility.Collapsed;
+            }
         }
 
         private void App_BackRequested(object sender, BackRequestedEventArgs e)
@@ -70,7 +74,7 @@ namespace IPTV
             e.Handled = true;
         }
 
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+        private void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }
@@ -96,8 +100,6 @@ namespace IPTV
             var rootFrame = GetRootFrame();
 
             NavigateToRoot(rootFrame);
-
-            ActiveBackBtn(rootFrame);
 
             Ioc.Default.GetRequiredService<INavigationService>()
                 .Navigate<StreamViewModel>(args.Files[0] as StorageFile);
@@ -125,29 +127,10 @@ namespace IPTV
         {
             if (rootFrame.Content == null)
             {
-                rootFrame.Navigate(typeof(MainPage));
+                rootFrame.Navigate(typeof(MainPage), SaveStateService.ParametrToMain);
             }
 
             SystemNavigationManager.GetForCurrentView().BackRequested += App_BackRequested;
         }
-
-        private void ActiveBackBtn(Frame rootFrame)
-        {
-
-            rootFrame.Navigated += (s, args) =>
-            {
-                if (rootFrame.CanGoBack)
-                {
-                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                                            AppViewBackButtonVisibility.Visible;
-                }
-                else
-                {
-                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                        AppViewBackButtonVisibility.Collapsed;
-                }
-            };
-        }
-
     }
 }

@@ -35,6 +35,7 @@ namespace IPTV.Models
             await file.DeleteAsync();
         }
 
+
         public async Task SaveToFile(string fileName, string inform)
         {
             var file = await GetFile(fileName);
@@ -50,6 +51,11 @@ namespace IPTV.Models
             await storageFolder.CreateFileAsync(fileName);
 
             await SaveToFile(fileName, inform);
+        }
+
+        public async Task SaveNewFile(StorageFile file)
+        {
+            await file.CopyAsync(storageFolder);
         }
 
         public async Task<List<string>> LoadFromFiles()

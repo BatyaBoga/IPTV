@@ -153,6 +153,9 @@
   <data name="Light" xml:space="preserve">
     <value>Светлая</value>
   </data>
+  <data name="Local.Content" xml:space="preserve">
+    <value>Локальний</value>
+  </data>
   <data name="Modify.Text" xml:space="preserve">
     <value>Изменить</value>
   </data>
@@ -162,11 +165,17 @@
   <data name="NoChannels" xml:space="preserve">
     <value>Каналы не найдены</value>
   </data>
+  <data name="NotSupported" xml:space="preserve">
+    <value>Файл не поддерживается</value>
+  </data>
   <data name="NotUnique" xml:space="preserve">
     <value>Такая ссылка уже существует</value>
   </data>
   <data name="Options.Text" xml:space="preserve">
     <value>Настройки</value>
+  </data>
+  <data name="Remote.Content" xml:space="preserve">
+    <value>Удаленный</value>
   </data>
   <data name="Save" xml:space="preserve">
     <value>Сохранить</value>

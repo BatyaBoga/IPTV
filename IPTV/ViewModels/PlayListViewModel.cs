@@ -28,7 +28,13 @@ namespace IPTV.ViewModels
 
             searchText = String.Empty;
         }
-        
+
+        public MediaSource SelectedChannel => MediaSource.CreateFromUri(new Uri(Channels[selectedIndex].Stream));
+
+        public List<Channel> Channels => searchText == String.Empty ? playlist.ChannelList : FilterChannels();
+
+        public ICommand ReturnBack => new RelayCommand(navigation.GoBack);
+
         public Playlist PlayList
         {
             get
@@ -39,12 +45,7 @@ namespace IPTV.ViewModels
             {
                 SetProperty(ref playlist, value);
             }
-        }
-        
-        public List<Channel> Channels
-        {
-            get => searchText == String.Empty ? playlist.ChannelList : FilterChannels();
-        }
+        }    
 
         public int SelectedIndex
         {
@@ -74,21 +75,6 @@ namespace IPTV.ViewModels
                     OnPropertyChanged(nameof(Channels));
                 }
             }
-        }
-
-        public string PlayListName
-        {
-            get => playlist.PlaylistTitle; 
-        }
-
-        public MediaSource SelectedChannel
-        {
-            get => MediaSource.CreateFromUri(new Uri(Channels[selectedIndex].Stream));
-        }
-
-        public ICommand ReturnBack
-        {
-            get => new RelayCommand(() => navigation.GoBack()); 
         }
 
         private List<Channel> FilterChannels()

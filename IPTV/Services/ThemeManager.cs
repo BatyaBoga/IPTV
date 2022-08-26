@@ -3,35 +3,51 @@ using Windows.Storage;
 using Windows.UI.Xaml;
 using IPTV.Constants;
 using IPTV.Interfaces;
+using IPTV.ViewModels;
 
 namespace IPTV.Services
 {
     public class ThemeManager : IThemeManager
     {
         private static string currentThemeForApp;
+
+        private readonly INavigationService navigation;
+
+        public ThemeManager(INavigationService navigation)
+        {
+            this.navigation = navigation;
+        }
+
         public static string CurrentThemeForApp
         {
-            get 
-            { 
-                return currentThemeForApp; 
+            get
+            {
+                return currentThemeForApp;
             }
             set
             {
-                if(currentThemeForApp != value)
+                if (currentThemeForApp != value)
                 {
                     currentThemeForApp = value;
                 }
             }
         }
 
-        public bool IsLightTheme
+        public bool IsLightTheme => CurrentThemeForApp == Constant.LightTheme;
+
+        private static object AppTheme
         {
-            get => CurrentThemeForApp == Constant.LightTheme ? true : false;
+            get => ApplicationData.Current.LocalSettings.Values[Constant.ThemeSetting];
+
+            set
+            {
+                ApplicationData.Current.LocalSettings.Values[Constant.ThemeSetting] = value;
+            }
         }
 
         public static void SetThemeFromStorgae()
         {
-            object theme = ApplicationData.Current.LocalSettings.Values[Constant.ThemeSetting];
+            object theme = AppTheme;
 
             if (theme != null)
             {
@@ -43,9 +59,11 @@ namespace IPTV.Services
 
         public void ChangeTheme(bool theme)
         {
-             CurrentThemeForApp = theme ? Constant.LightTheme : Constant.DarkTheme;
+            CurrentThemeForApp = theme ? Constant.LightTheme : Constant.DarkTheme;
 
-            ApplicationData.Current.LocalSettings.Values[Constant.ThemeSetting] = theme ? 0 : 1;
+            AppTheme = theme ? 0 : 1;
+
+            navigation.Refresh<OptionsViewModel>();
         }
     }
 }

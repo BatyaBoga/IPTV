@@ -10,6 +10,8 @@ namespace IPTV.Interfaces
 
         Task SaveToFile(string fileName, string inform);
 
+        Task SaveNewFile(StorageFile file);
+
         Task SaveToNewFile(string fileName, string inform);
 
         Task<List<string>> LoadFromFiles();

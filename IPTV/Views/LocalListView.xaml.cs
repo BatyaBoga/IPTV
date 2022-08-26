@@ -3,13 +3,13 @@ using IPTV.Services;
 
 namespace IPTV.Views
 {
-    public sealed partial class OptionsView : Page
+    public sealed partial class LocalListView : Page
     {
-        public OptionsView()
+        public LocalListView()
         {
             InitializeComponent();
 
-            DataContext  = ViewModelLocator.Instance.Options;
+            DataContext = ViewModelLocator.Instance.LocalList;
         }
     }
 }

@@ -54,7 +54,7 @@ namespace IPTV.ViewModels
 
             resload = ResourceLoader.GetForCurrentView();
 
-            playlistCollection = MainViewModel.PlaylistCollection;
+            playlistCollection = RemoteListViewModel.PlaylistCollection;
         }
 
         public bool IsEnabledToEdit
@@ -70,10 +70,9 @@ namespace IPTV.ViewModels
             }
         }
 
-        public bool IsRingActive
-        {
-            get => !IsEnabledToEdit;
-        }
+        public bool IsRingActive => !IsEnabledToEdit;
+
+        public ICommand Cancel => new RelayCommand(() => dialogService.CloseDialog());
 
         public double Opacity
         {
@@ -168,10 +167,6 @@ namespace IPTV.ViewModels
             }
         }
 
-        public ICommand Cancel
-        {
-            get => new RelayCommand(() => dialogService.CloseDialog());
-        }
 
         public void ConfigureToAdd()
         {

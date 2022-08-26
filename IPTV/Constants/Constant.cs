@@ -4,6 +4,8 @@
     {
         public  const string IptvDataFolderName = "IptvData";
 
+        public  const string LocalVideoFolderName = "IptvDataLocal";
+
         public const string RegexForChnaels = @"tvg-logo=""(([^""]+)?)"".+,(.+)\s(https?\S+)";
 
         public const string RegexForTitle = @"^\w(\w+\s{0,3})+?$";
@@ -21,5 +23,19 @@
         public const string TaskName = "UdateChannelTrigger";
 
         public const string OpenPlaylist = "OpenPlaylist";
+
+        public const string Local = "Local";
+
+        public const string Remote = "Remote";
+
+        public const string Options = "Options";
+
+        public const string InternetLost = "InternetLost";
+
+        public const string InternetEstablished = "InternetEstablished";
+
+        public const string Iptv = "IPTV";
+
+        public const string SettingsFile = "appsettings.json";
     }
 }

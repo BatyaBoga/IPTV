@@ -6,7 +6,6 @@
     xmlns:vm ="using:IPTV.ViewModels">
 
     <Application.Resources>
-
         <Style x:Key="MenuBtnStyle" TargetType="Button" >
             <Setter Property="Control.CornerRadius" Value="20,20,20,20" />
             <Setter Property="Control.BorderThickness" Value="2,2,2,2" />

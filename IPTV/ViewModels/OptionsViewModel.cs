@@ -28,10 +28,11 @@ namespace IPTV.ViewModels
             selectedIndex = this.languageManager.SelectedLanguageIndex();
         }
 
-        public Dictionary<string,string>.ValueCollection Languages
-        {
-            get => languageManager.Languages.Values; 
-        }
+        public Dictionary<string,string>.ValueCollection Languages => languageManager.Languages.Values;
+
+        public string ToogleOn => ResourceLoader.GetForCurrentView().GetString(Constant.LightTheme);
+
+        public string CurrentTheme => ThemeManager.CurrentThemeForApp;
 
         public int SelectedIndex
         {
@@ -42,13 +43,10 @@ namespace IPTV.ViewModels
             set
             {
                 if(SetProperty(ref selectedIndex, value))
-                languageManager.ChangeLanguage(selectedIndex);
+                {
+                    languageManager.ChangeLanguage(selectedIndex);
+                }   
             }
-        }
-
-        public string ToogleOn
-        {
-            get => ResourceLoader.GetForCurrentView().GetString(Constant.LightTheme);
         }
 
         public bool IsToogleOn
@@ -66,11 +64,6 @@ namespace IPTV.ViewModels
                     OnPropertyChanged(nameof(CurrentTheme));
                 }
             }
-        }
-
-        public string CurrentTheme
-        {
-            get => ThemeManager.CurrentThemeForApp;  
         }
     }
 }

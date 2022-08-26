@@ -7,9 +7,16 @@ namespace IPTV.Services
     {
         private static Dictionary<Type, Type> dependency = new Dictionary<Type, Type>();
 
-        public static void RegisterDependecy<TViewModel, TView>()
+        public static void RegisterDependecy(Dictionary<Type, Type> dependencyContainer)
         {
-            dependency.Add(typeof(TView), typeof(TViewModel));
+            dependency = dependencyContainer;   
+        }
+
+        public static Dictionary<Type,Type> AddDependency<View, ViewModel>(this Dictionary<Type, Type> dependencyContainer)
+        {
+            dependencyContainer.Add(typeof(ViewModel), typeof(View));
+
+            return dependencyContainer;
         }
 
         public static Type GetDependecyType(Type TViewModel)

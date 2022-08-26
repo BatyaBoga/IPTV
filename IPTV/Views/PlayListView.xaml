@@ -25,7 +25,7 @@
             </Grid.RowDefinitions>
             
             <Grid>
-                <TextBlock Text="{Binding PlayListName}" TextAlignment="Center"  TextWrapping="Wrap" HorizontalAlignment="Center" 
+                <TextBlock Text="{Binding PlayList.PlaylistTitle, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Center"  TextWrapping="Wrap" HorizontalAlignment="Center" 
                            Width="297" VerticalAlignment="Center"  FontWeight="Bold" FontStyle="Normal" TextDecorations="None" FontSize="14" />
 
             </Grid>

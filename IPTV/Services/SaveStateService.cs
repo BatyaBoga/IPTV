@@ -1,13 +1,13 @@
-﻿using IPTV.Models.Model;
+﻿using System;
+using System.IO;
+using System.Threading.Tasks;
+using Windows.Storage;
+using Windows.UI.Core.Preview;
+using Newtonsoft.Json;
 using IPTV.Interfaces;
 using IPTV.ViewModels;
 using IPTV.Constants;
-using Windows.Storage;
-using Windows.UI.Core.Preview;
-using System;
-using System.Threading.Tasks;
-using System.Diagnostics;
-using Newtonsoft.Json;
+using IPTV.Models.Model.SettingsModel;
 
 namespace IPTV.Services
 {
@@ -17,126 +17,196 @@ namespace IPTV.Services
 
         private readonly IIptvManager manager;
 
+        private SavedMedia savedMedia;
+
+        private string menuItem;
+
         private object viewModel;
 
-        private object parametr;
-
-        private Action goToViewModel;
+        private Action actionToLoad;
 
         public SaveStateService(INavigationService navigationService, IIptvManager manager)
         {
             this.navigationService = navigationService;
+
             this.manager = manager;
         }
 
-        private object SaveOptions
+        public object ParametrToMain => savedMedia != null ? savedMedia.MenuItem : null;
+   
+        public void ActiveSave(string menuItem, object viewModel)
         {
-            get
-            {
-                return ApplicationData.Current.LocalSettings.Values[Constant.OpenPlaylist];
-            }
-            set
-            {
-                ApplicationData.Current.LocalSettings.Values[Constant.OpenPlaylist] = value;
-            }
-        }
+            this.menuItem = menuItem;
 
-        public void ActiveSave(object viewModel)
-        {
             this.viewModel = viewModel;
-
+                
             SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += this.OnCloseRequest;
         }
 
         public void DeactiveSave()
         {
-            this.viewModel = null;
+            savedMedia = null;
 
             SystemNavigationManagerPreview.GetForCurrentView().CloseRequested -= this.OnCloseRequest;
         }
 
-        public async Task LoadSaveState()
+        public async void LoadSavedMedia()
         {
+            var settingsFile = await GetSettingsFile();
 
-            string saveText = SaveOptions as string ?? String.Empty;
-            
-            if(saveText != String.Empty && RegexCheck.IsLink(saveText))
+            string savedtext = await FileIO.ReadTextAsync(settingsFile);
+
+            if(savedtext != String.Empty)
             {
-                parametr = saveText;
-
-               goToViewModel = () => GoToViewModel<StreamViewModel>();  
+               savedMedia = JsonConvert.DeserializeObject<SavedMedia>(savedtext);
             }
 
-            OpenPlaylist openPlaylist = null;
-
-            TryGetOpenPlaylist(saveText, out openPlaylist);
-
-            if (openPlaylist != null)
+            if(savedMedia != null)
             {
-                ViewModelLocator.Instance.PlayList.SelectedIndex = openPlaylist.SelectedIndex;
-
-                parametr = await manager.GetPlaylistByFileName(openPlaylist.FileName);
-
-                goToViewModel = ()=> GoToViewModel<PlayListViewModel>();
-            }
-
-            SaveOptions = null;
-        }
-
-        public Task LoadSaveStateAsync()
-        {
-            return Task.Run(async() => await LoadSaveState());
-        }
-
-        public void GoToSaveState()
-        {
-            if(goToViewModel != null)
-            {
-                goToViewModel.Invoke();
-            }
-        }
-
-        private void GoToViewModel<T>()
-        {
-            if(parametr != null)
-            {
-                navigationService.Navigate<T>(parametr);
-            }
-        }
-
-        private void TryGetOpenPlaylist(string saveText, out OpenPlaylist openPlaylist)
-        {
-            try
-            {
-                openPlaylist = JsonConvert.DeserializeObject<OpenPlaylist>(saveText);
-            }
-            catch (JsonReaderException)
-            {
-                openPlaylist = null;
-            }
-        }
-
-        private void OnCloseRequest(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
-        {
-            var playlistviewmodel = viewModel as PlayListViewModel;
-
-            if(playlistviewmodel != null)
-            {
-                var openplaylist = new OpenPlaylist()
+                if (savedMedia.SavedPlaylist != null)
                 {
-                    FileName = playlistviewmodel.PlayList.FileName,
+                    actionToLoad = LoadForPlaylist;
+                }
+                else if(savedMedia.SavedStream != null)
+                {
+                    actionToLoad = LoadForStream;
+                }
+            }   
+        }
 
-                    SelectedIndex = playlistviewmodel.SelectedIndex
-                };
-                string openplaylistText = JsonConvert.SerializeObject(openplaylist);
+        public Task LoadSaveMediaAsync() 
+        {
+            return Task.Run(LoadSavedMedia);
+        }
 
-                SaveOptions = openplaylistText;
+        public async void GoToLoadedMedia()
+        {
+            if(actionToLoad != null)
+            {
+                actionToLoad.Invoke();
+
+                var file = await GetSettingsFile();
+
+                await FileIO.WriteTextAsync(file, "");
+            }
+        }
+
+        private async Task<StorageFile> GetSettingsFile()
+        {
+            return await ApplicationData.Current.LocalFolder
+                .CreateFileAsync(Constant.SettingsFile, CreationCollisionOption.OpenIfExists);
+        }
+
+        private async void LoadForPlaylist()
+        {
+            var playlist = await manager.GetPlaylistByFileName(savedMedia.SavedPlaylist.FileName);
+
+            ViewModelLocator.Instance.PlayList.SelectedIndex = savedMedia.SavedPlaylist.StreamId;
+
+            navigationService.Navigate<PlayListViewModel>(playlist);
+        }
+
+        private async void LoadForStream()
+        {
+            if(savedMedia.MenuItem == Constant.Remote)
+            {
+                navigationService.Navigate<StreamViewModel>(savedMedia.SavedStream.Link);
             }
             else
             {
-                string saveLink = (viewModel as StreamViewModel).Stream.Uri.AbsoluteUri;
+                var file = await TryLoadFile(savedMedia.SavedStream.FilePath);
 
-                SaveOptions = saveLink;
+                if(file != null)
+                {
+                    navigationService.Navigate<StreamViewModel>(file);
+                }
+            }
+        }
+
+        private async Task<StorageFile> TryLoadFile(string FilePath)
+        {
+            StorageFile storageFile;
+
+            try
+            {
+               storageFile = await StorageFile.GetFileFromPathAsync(savedMedia.SavedStream.FilePath);
+
+            }
+            catch (FileNotFoundException)
+            {
+                storageFile = null;
+            }
+
+            return storageFile;
+        }
+
+        private void InizializedSavedMedia()
+        {
+            savedMedia = new SavedMedia
+            {
+                MenuItem = menuItem,
+
+                SavedPlaylist = null,
+
+                SavedStream = null
+            };
+
+            if (viewModel is PlayListViewModel)
+            {
+                InizializedSavedPlaylist();
+            }
+            else if (viewModel is StreamViewModel)
+            {
+                InizializedSavedStream();
+            }
+        }
+
+        private Task InizializedSavedMediaAsync()
+        {
+            return Task.Run(InizializedSavedMedia);
+        }
+
+        private void InizializedSavedPlaylist()
+        {
+            var playlistViewModel = viewModel as PlayListViewModel;
+
+            var savedplaylist = new SavedPlaylist()
+            {
+                FileName = playlistViewModel.PlayList.FileName,
+
+                StreamId = playlistViewModel.SelectedIndex
+            };
+
+            savedMedia.SavedPlaylist = savedplaylist;
+        }
+
+        private void InizializedSavedStream()
+        {
+            var streamViewModel = viewModel as StreamViewModel;
+
+            var savedstream = new SavedStream();
+
+            if (menuItem == Constant.Local)
+            {
+                savedstream.FilePath = streamViewModel.StorageFilePath;
+            }
+            else
+            {
+                savedstream.Link = streamViewModel.Stream.Uri.OriginalString;
+            }
+
+            savedMedia.SavedStream = savedstream;
+        }
+
+        private async void OnCloseRequest(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
+        {
+            await InizializedSavedMediaAsync();
+
+            var settingsFile = await GetSettingsFile();
+
+            if (savedMedia != null)
+            {
+                await FileIO.WriteTextAsync(settingsFile, JsonConvert.SerializeObject(savedMedia));
             }
         }
     }

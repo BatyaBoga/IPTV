@@ -153,6 +153,9 @@
   <data name="Light" xml:space="preserve">
     <value>Light</value>
   </data>
+  <data name="Local.Content" xml:space="preserve">
+    <value>Local</value>
+  </data>
   <data name="Modify.Text" xml:space="preserve">
     <value>Modify</value>
   </data>
@@ -162,11 +165,17 @@
   <data name="NoChnannels" xml:space="preserve">
     <value>Channels not found</value>
   </data>
+  <data name="NotSupported" xml:space="preserve">
+    <value>File not supported</value>
+  </data>
   <data name="NotUnique" xml:space="preserve">
     <value>This link already exists</value>
   </data>
   <data name="Options.Text" xml:space="preserve">
     <value>Options</value>
+  </data>
+  <data name="Remote.Content" xml:space="preserve">
+    <value>Remote</value>
   </data>
   <data name="Save" xml:space="preserve">
     <value>Save</value>

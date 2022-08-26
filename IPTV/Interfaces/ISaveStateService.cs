@@ -4,14 +4,15 @@ namespace IPTV.Interfaces
 {
     public interface ISaveStateService
     {
-        void ActiveSave(object viewModel);
+        object ParametrToMain { get; }
+        void ActiveSave(string menuItem, object viewModel);
 
         void DeactiveSave();
 
-        Task LoadSaveState();
+        void LoadSavedMedia();
 
-        Task LoadSaveStateAsync();
+        Task LoadSaveMediaAsync();
 
-        void GoToSaveState();
+        void GoToLoadedMedia();
     }
 }

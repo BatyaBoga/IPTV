@@ -139,7 +139,6 @@ namespace IPTV.Models
             }
 
             return channelList;
-
         }
 
         private async Task<List<Channel>> GetChannelsAsync(string link)
