@@ -24,16 +24,18 @@ namespace IPTV
         {
             _ =  Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                string tag = tag = Constant.Remote; 
+                string tag = tag = Constant.Remote;
 
-                if(e.Parameter != null)
-                {
-                    tag = e.Parameter.ToString();
-                }
-                else if(ViewModel.SelectedItem != null)
+
+                if (ViewModel.SelectedItem != null)
                 {
                     tag = (ViewModel.SelectedItem as NavigationViewItem).Tag as string;
                 }
+                else if (e.Parameter != null)
+                {
+                    tag = e.Parameter.ToString();
+                }
+               
 
                 if ( tag != null && tag != Constant.Options)
                 {

@@ -57,7 +57,7 @@ namespace IPTV.ViewModels
             {
                 if(value >= 0 && SetProperty(ref selectedIndex, value))
                 {
-                    OnPropertyChanged(nameof(SelectedChannel));
+                    OnSelectedChanelChnaged();
                 }                
             }
         }
@@ -75,6 +75,11 @@ namespace IPTV.ViewModels
                     OnPropertyChanged(nameof(Channels));
                 }
             }
+        }
+
+        public void OnSelectedChanelChnaged()
+        {
+            OnPropertyChanged(nameof(SelectedChannel));
         }
 
         private List<Channel> FilterChannels()

@@ -171,6 +171,9 @@
   <data name="NotUnique" xml:space="preserve">
     <value>Такая ссылка уже существует</value>
   </data>
+  <data name="NotUniqueName" xml:space="preserve">
+    <value>Такой файл уже существует</value>
+  </data>
   <data name="Options.Text" xml:space="preserve">
     <value>Настройки</value>
   </data>

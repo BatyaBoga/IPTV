@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.IO;
+using System.Windows.Input;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using Windows.Storage;
@@ -59,15 +60,18 @@ namespace IPTV.ViewModels
         {
             get
             {
-                return new RelayCommand(async () => {
-
-                    if(await mediaFile.AddFile(LocalChannels))
+                return new RelayCommand(async () => 
+                {
+                    try
                     {
-                        await messageDialog.ShowInfoMsg("Successfully");
+                        if (await mediaFile.AddFile(LocalChannels))
+                        {
+                            await messageDialog.ShowInfoMsg("Successfully");
+                        }
                     }
-                    else
+                    catch (FileLoadException ex)
                     {
-                        await messageDialog.ShowInfoMsg("NotUnique");
+                        await messageDialog.ShowInfoMsg(ex.Message);
                     }
                 });
             }

@@ -11,17 +11,35 @@ namespace IPTV.Services
     {
         private readonly ResourceLoader resload = new ResourceLoader();
 
+        private bool InternetStatus;
+
         public bool IsConnected => NetworkInformation.GetInternetConnectionProfile() != null;
+
+        public delegate void InternetRestoring();
+
+        public static event InternetRestoring InternetRestoringEvent;
+
+        public InternetChecker()
+        {
+            InternetStatus = IsConnected;
+        }
 
         public void OnNetworkStatusChange(object sender)
         {
-            if (IsConnected)
+            if (InternetStatus != IsConnected)
             {
-                ShowMsg(resload.GetString(Constant.InternetEstablished));
-            }
-            else
-            {
-                ShowMsg(resload.GetString(Constant.InternetLost));
+                if (IsConnected)
+                {
+                    ShowMsg(resload.GetString(Constant.InternetEstablished));
+
+                    InternetRestoringEvent?.Invoke();
+                }
+                else
+                {
+                    ShowMsg(resload.GetString(Constant.InternetLost));
+                }
+
+                InternetStatus = IsConnected;
             }
         }
 
@@ -37,15 +55,16 @@ namespace IPTV.Services
 
             toastNodeList.Item(1).AppendChild(toastXml.CreateTextNode(body));
 
-            var toastNode = toastXml.SelectSingleNode("/toast");
+            toastXml.SelectSingleNode("/toast");
 
             var audio = toastXml.CreateElement("audio");
 
             audio.SetAttribute("src", "ms-winsoundevent:Notification.SMS");
 
-            var toast = new ToastNotification(toastXml);
-
-            toast.ExpirationTime = DateTime.Now.AddSeconds(4);
+            var toast = new ToastNotification(toastXml)
+            {
+                ExpirationTime = DateTime.Now.AddSeconds(2)
+            };
 
             ToastNotifier.Show(toast);
         }

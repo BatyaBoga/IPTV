@@ -39,28 +39,36 @@ namespace IPTV.Models
 
         public async Task<bool> AddFile(ObservableCollection<LocalChannel> localChannels)
         {
-            bool added = false;
+            bool picked = false;
 
-            var picker = new FileOpenPicker();
+            var picker = new FileOpenPicker
+            {
+                ViewMode = PickerViewMode.Thumbnail,
 
-            picker.ViewMode = PickerViewMode.Thumbnail;
-
-            picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+                SuggestedStartLocation = PickerLocationId.PicturesLibrary
+            };
 
             picker.FileTypeFilter.Add(".m3u8");
 
             var file = await picker.PickSingleFileAsync();
 
-            if (file != null && !HasFile(localChannels, file))
+            if (file != null)
             {
-                localChannels.Add(new LocalChannel() { LocalFile = file, CanDelete = true });
+                if (!HasFile(localChannels, file))
+                {
+                    localChannels.Add(new LocalChannel() { LocalFile = file, CanDelete = true });
 
-                await explorer.SaveNewFile(file);
+                    await explorer.SaveNewFile(file);
 
-                added = true;
+                    picked = true;
+                }
+                else
+                {
+                    throw new FileLoadException("NotUniqueName");
+                }
             }
 
-            return added;
+            return picked;
         }
 
         public async Task DeleteFile(ObservableCollection<LocalChannel> localChannels, StorageFile file)
@@ -95,18 +103,7 @@ namespace IPTV.Models
 
         private bool HasFile(ObservableCollection<LocalChannel> localChannels, StorageFile file)
         {
-            bool hasFile = false;
-
-            foreach (var item in localChannels)
-            {
-                if(item.LocalFile.Path == file.Path)
-                {
-                    hasFile = true;
-                    break;
-                }
-            }
-
-            return hasFile;
+            return (from item in localChannels select item.LocalFile.Name).Contains(file.Name); ;
         }
 
         private async Task ConfigExplorer()

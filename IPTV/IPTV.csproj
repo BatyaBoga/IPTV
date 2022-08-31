@@ -172,6 +172,7 @@
     <Compile Include="Views\OptionsView.xaml.cs">
       <DependentUpon>OptionsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\PageWithPlayer.cs" />
     <Compile Include="Views\PlayListView.xaml.cs">
       <DependentUpon>PlayListView.xaml</DependentUpon>
     </Compile>

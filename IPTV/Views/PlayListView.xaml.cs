@@ -1,46 +1,32 @@
-﻿using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using System;
+using Windows.UI.Core;
+using Windows.ApplicationModel.Core;
 using IPTV.Models.Model;
 using IPTV.Services;
 using IPTV.ViewModels;
-using IPTV.Interfaces;
-using IPTV.Constants;
 
 namespace IPTV.Views
 {
-    public sealed partial class PlayListView : Page
+    public sealed partial class PlayListView : PageWithPlayer
     {
         public PlayListView()
         {
             InitializeComponent();
+
+            ViewModel = ViewModelLocator.Instance.PlayList;
+        }
+  
+        protected override void SetMediaSource(object parameter)
+        {
+            (ViewModel as PlayListViewModel).PlayList = parameter as Playlist;   
         }
 
-        private static PlayListViewModel ViewModel => ViewModelLocator.Instance.PlayList;
-
-        private static ISaveStateService SaveServise => Ioc.Default.GetRequiredService<ISaveStateService>(); 
-
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnInternetRestoring()
         {
-            App.IsBackButtonEnabled(true);
-
-            if (e.Parameter != null)
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                ViewModel.PlayList = e.Parameter as Playlist;
-            }
-
-            SaveServise.ActiveSave(Constant.Remote, ViewModel);
-
-            DataContext = ViewModel;
-        }
-
-        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
-        {
-           SaveServise.DeactiveSave();
-
-           DataContext = null;
-
-           App.IsBackButtonEnabled(false);
+                (ViewModel as PlayListViewModel).OnSelectedChanelChnaged();
+            });
         }
     }
 }
