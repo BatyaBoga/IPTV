@@ -1,9 +1,10 @@
 ﻿using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using IPTV.Services;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using IPTV.Constants;
 using IPTV.ViewModels;
+using IPTV.Interfaces;
 
 namespace IPTV
 {
@@ -14,9 +15,9 @@ namespace IPTV
             InitializeComponent();
 
             DataContext = ViewModel;
-        }
 
-        public Frame NavigationFrame => ContentFrame;
+            Ioc.Default.GetRequiredService<INavigationService>().HomeFrame = ContentFrame;
+        }
 
         private static MainViewModel ViewModel => ViewModelLocator.Instance.Main;
 

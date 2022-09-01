@@ -6,7 +6,6 @@ using Windows.ApplicationModel.Core;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using IPTV.Constants;
 using IPTV.Interfaces;
-using IPTV.Services;
 
 namespace IPTV.Views
 {
@@ -17,6 +16,7 @@ namespace IPTV.Views
         protected static object ViewModel;
 
         protected static ISaveStateService SaveServise => Ioc.Default.GetRequiredService<ISaveStateService>();
+        protected static IInternetChecker InterneServise => Ioc.Default.GetRequiredService<IInternetChecker>();
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
@@ -28,7 +28,7 @@ namespace IPTV.Views
 
             SaveServise.ActiveSave(Constant.Remote, ViewModel);
 
-            InternetChecker.InternetRestoringEvent += OnInternetRestoring;
+            InterneServise.InternetRestoringEvent += OnInternetRestoring;
 
             DataContext = ViewModel;
         }
@@ -39,7 +39,7 @@ namespace IPTV.Views
 
             DataContext = null;
 
-            InternetChecker.InternetRestoringEvent += OnInternetRestoring;
+            InterneServise.InternetRestoringEvent += OnInternetRestoring;
 
             App.IsBackButtonEnabled(false);
         }

@@ -2,7 +2,6 @@
 using Windows.UI.Core;
 using Windows.ApplicationModel.Core;
 using IPTV.Models.Model;
-using IPTV.Services;
 using IPTV.ViewModels;
 
 namespace IPTV.Views

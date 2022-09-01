@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -6,37 +8,37 @@ using Windows.UI.Xaml.Navigation;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Background;
+using Windows.Networking.Connectivity;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using IPTV.Views;
+using IPTV.Models;
+using IPTV.Services;
+using IPTV.Constants;
 using IPTV.ViewModels;
 using IPTV.Interfaces;
-using IPTV.Services;
-using IPTV.Models;
-using Windows.Storage;
-using Windows.Networking.Connectivity;
+using IPTV.Models.Interfaces;
 
 namespace IPTV
 {
-    sealed partial class App : Application
+    public partial class App : Application
     {
         private readonly Updater updater;
 
-        private ISaveStateService SaveStateService => Ioc.Default.GetRequiredService<ISaveStateService>();
+        private readonly ISaveStateService saveStateService;
+
+        public static ViewModelLocator ViewModel;
 
         public App()
         {
             InitializeComponent();
 
-            Suspending += OnSuspending;
+            ViewModel = ViewModelLocator.Instance;
 
-            var locator = ViewModelLocator.Instance;
-
-            ThemeManager.SetThemeFromStorgae();
-
-            SaveStateService.LoadSavedMedia();
+            saveStateService = Ioc.Default.GetRequiredService<ISaveStateService>();
 
             updater = new Updater(Ioc.Default.GetRequiredService<IIptvManager>());
 
-            NetworkInformation.NetworkStatusChanged += Ioc.Default.GetRequiredService<IInternetChecker>().OnNetworkStatusChange;
+            SetOptions();
         }
 
         protected override void OnLaunched(LaunchActivatedEventArgs e)
@@ -48,7 +50,7 @@ namespace IPTV
                NavigateToRoot(rootFrame);
             }
 
-            SaveStateService.GoToLoadedMedia();
+            saveStateService.GoToLoadedMedia();
 
             Window.Current.Activate();
         }
@@ -127,10 +129,49 @@ namespace IPTV
         {
             if (rootFrame.Content == null)
             {
-                rootFrame.Navigate(typeof(MainPage), SaveStateService.ParametrToMain);
+                rootFrame.Navigate(typeof(MainPage), saveStateService.ParametrToMain);
             }
 
             SystemNavigationManager.GetForCurrentView().BackRequested += App_BackRequested;
+        }
+
+        private void RegisterDependency()
+        {
+            DependencyTypeContainer.RegisterDependecy(
+          new Dictionary<Type, Type>()
+          .AddDependency<AddPlaylistDialog, AddListViewModel>()
+          .AddDependency<MainPage, MainViewModel>()
+          .AddDependency<PlayListView, PlayListViewModel>()
+          .AddDependency<StreamView, StreamViewModel>()
+          .AddDependency<OptionsView, OptionsViewModel>()
+          .AddDependency<RemoteListView, RemoteListViewModel>()
+          .AddDependency<LocalListView, LocalListViewModel>());
+        }
+
+        private void SetThemeFromStorgae()
+        {
+            var theme = ApplicationData.Current.LocalSettings.Values[Constant.ThemeSetting];
+
+            if (theme != null)
+            {
+                Current.RequestedTheme = (ApplicationTheme)Convert.ToInt32(theme);
+            }
+
+            ThemeManager.CurrentThemeForApp = Current.RequestedTheme.ToString();
+        }
+
+        private void SetOptions()
+        {
+            Suspending += OnSuspending;
+
+            SetThemeFromStorgae();
+
+            RegisterDependency();
+
+            saveStateService.LoadSavedMedia();
+
+            NetworkInformation.NetworkStatusChanged += 
+                Ioc.Default.GetRequiredService<IInternetChecker>().OnNetworkStatusChange;
         }
     }
 }

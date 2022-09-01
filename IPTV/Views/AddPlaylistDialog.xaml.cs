@@ -1,7 +1,6 @@
 ﻿using Windows.UI.Xaml.Controls;
 using IPTV.Models.Model;
 using IPTV.ViewModels;
-using IPTV.Services;
 
 namespace IPTV.Views
 {
